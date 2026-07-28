@@ -149,12 +149,12 @@ a:hover {
 
 .bee-dash {
   position: absolute;
-  width: 7px;
-  height: 2px;
+  width: 3px;
+  height: 3px;
   margin: 0;
-  border-radius: 1px;
+  border-radius: 0;
   background: var(--ink-faint);
-  animation: bee-dash-fade 1s ease-out forwards;
+  animation: bee-dash-fade 1.8s ease-out forwards;
   will-change: opacity;
 }
 
