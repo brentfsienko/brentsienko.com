@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-/** Apple touch icon — triangle stinger (not a black square), head with eye. */
+/** Apple touch icon — wing, stripes, triangle stinger (no head). */
 export default function AppleIcon() {
   const cells: { x: number; y: number; color: string }[] = [
     ...[7, 8, 9, 10, 11, 12].flatMap((x) => [
@@ -23,22 +23,15 @@ export default function AppleIcon() {
     { x: 2, y: 9, color: "#1a1a1a" },
     { x: 3, y: 9, color: "#1a1a1a" },
     { x: 3, y: 10, color: "#1a1a1a" },
-    ...[4, 5, 6, 7, 8, 9, 10, 11, 12, 13].flatMap((x) =>
+    ...[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].flatMap((x) =>
       [5, 6, 7, 8, 9, 10].map((y) => ({ x, y, color: "#f0c840" })),
     ),
-    ...[6, 7].flatMap((x) =>
+    ...[7, 8].flatMap((x) =>
       [5, 6, 7, 8, 9, 10].map((y) => ({ x, y, color: "#1a1a1a" })),
     ),
-    ...[10, 11].flatMap((x) =>
+    ...[11, 12].flatMap((x) =>
       [5, 6, 7, 8, 9, 10].map((y) => ({ x, y, color: "#1a1a1a" })),
     ),
-    ...[14, 15, 16, 17].flatMap((x) =>
-      [5, 6, 7, 8, 9].map((y) => ({ x, y, color: "#1a1a1a" })),
-    ),
-    { x: 15, y: 6, color: "#f0c840" },
-    { x: 16, y: 6, color: "#f0c840" },
-    { x: 15, y: 7, color: "#f0c840" },
-    { x: 16, y: 7, color: "#f0c840" },
   ];
 
   const map = new Map<string, string>();
