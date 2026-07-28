@@ -26,6 +26,11 @@ export default function Icon() {
     ...[13, 14].flatMap((x) =>
       [5, 6, 7, 8, 9, 10].map((y) => ({ x, y, color: "#1a1a1a" })),
     ),
+    // stinger (small triangle)
+    { x: 18, y: 6, color: "#1a1a1a" },
+    { x: 18, y: 7, color: "#1a1a1a" },
+    { x: 19, y: 7, color: "#1a1a1a" },
+    { x: 18, y: 8, color: "#1a1a1a" },
   ];
 
   const map = new Map<string, string>();
