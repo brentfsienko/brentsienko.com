@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
+import { WanderingBee } from "@/components/WanderingBee";
 import "./globals.css";
 
 const jetbrains = JetBrains_Mono({
@@ -35,6 +36,7 @@ export default function RootLayout({
     <html lang="en" className={`${jetbrains.variable} h-full`}>
       <body className="paper-grain flex min-h-full flex-col font-mono text-ink antialiased">
         <SiteHeader />
+        <WanderingBee />
         <main className="relative z-10 flex-1">{children}</main>
         <SiteFooter />
       </body>
