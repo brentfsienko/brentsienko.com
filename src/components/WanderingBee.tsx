@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { PixelBee, PixelHive } from "@/components/PixelArt";
+import { PixelBee } from "@/components/PixelArt";
 
 type Point = { x: number; y: number };
 
@@ -38,6 +38,10 @@ function easeInOut(t: number) {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 }
 
+function entranceEl() {
+  return document.getElementById("bee-hive-entrance");
+}
+
 export function WanderingBee() {
   const [pos, setPos] = useState<Point>({ x: 80, y: 80 });
   const [facingLeft, setFacingLeft] = useState(false);
@@ -47,7 +51,6 @@ export function WanderingBee() {
   const posRef = useRef(pos);
   const rafRef = useRef<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const entranceRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -62,7 +65,7 @@ export function WanderingBee() {
 
     /** Bee top-left so its center lands on the hive entrance hole. */
     const hive = (): Point => {
-      const el = entranceRef.current;
+      const el = entranceEl();
       if (el) {
         const r = el.getBoundingClientRect();
         return {
@@ -73,14 +76,15 @@ export function WanderingBee() {
       const w = window.innerWidth;
       const sm = w >= 640;
       const right = sm ? 20 : 12;
-      const top = sm ? 64 : 56;
+      // Approx header content height + border; hive hangs just below the rule
+      const headerBottom = 58;
       const hiveW = 64;
       const hiveH = 72;
       const entrX = (14 / 28) * hiveW;
       const entrY = (22 / 32) * hiveH;
       return {
         x: w - right - hiveW + entrX - BEE_W / 2,
-        y: top + entrY - BEE_H / 2,
+        y: headerBottom - 2 + entrY - BEE_H / 2,
       };
     };
 
@@ -221,23 +225,6 @@ export function WanderingBee() {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[40] overflow-hidden" aria-hidden>
-      <div className="absolute right-3 top-14 sm:right-5 sm:top-16">
-        <div className="relative" style={{ width: 64, height: 72 }}>
-          <PixelHive width={64} height={72} />
-          <span
-            ref={entranceRef}
-            className="absolute"
-            style={{
-              left: `${(14 / 28) * 100}%`,
-              top: `${(22 / 32) * 100}%`,
-              width: 8,
-              height: 8,
-              transform: "translate(-50%, -50%)",
-            }}
-          />
-        </div>
-      </div>
-
       {!reducedMotion && visible && (
         <div
           className="absolute will-change-transform"
@@ -262,7 +249,7 @@ export function WanderingBee() {
       )}
 
       {reducedMotion && (
-        <div className="absolute right-[4.5rem] top-[5.75rem]">
+        <div className="absolute right-[4.5rem] top-[4.25rem]">
           <PixelBee width={36} height={26} className="!animate-none" />
         </div>
       )}
