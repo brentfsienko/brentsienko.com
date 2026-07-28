@@ -8,8 +8,8 @@ type Dash = { id: number; x: number; y: number; angle: number };
 
 const BEE_W = 44;
 const BEE_H = 32;
-const DASH_GAP = 14;
-const TRAIL_MS = 1000;
+const DASH_GAP = 12;
+const TRAIL_MS = 1800;
 
 const QUIPS = [
   "bzzzzz",
@@ -85,7 +85,7 @@ export function WanderingBee() {
         y: at.y + BEE_H / 2,
         angle: (Math.atan2(dy, dx) * 180) / Math.PI,
       };
-      setTrail((cur) => [...cur.slice(-24), dash]);
+      setTrail((cur) => [...cur.slice(-40), dash]);
       const timeout = setTimeout(() => {
         setTrail((cur) => cur.filter((d) => d.id !== id));
         dashTimeoutsRef.current = dashTimeoutsRef.current.filter(
