@@ -198,6 +198,8 @@ export function PixelBee({ className = "", width = 40, height = 28 }: Props) {
       {/* two vertical stripes */}
       <rect x="9" y="5" width="2" height="6" fill="#1a1a1a" />
       <rect x="13" y="5" width="2" height="6" fill="#1a1a1a" />
+      {/* stinger */}
+      <polygon points="18,6.5 20,8 18,9.5" fill="#1a1a1a" />
     </svg>
   );
 }
