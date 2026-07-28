@@ -6,6 +6,7 @@ export type Project = {
   liveUrl: string;
   repoUrl: string | null;
   stack: string[];
+  logoSrc: string;
 };
 
 export const projects: Project[] = [
@@ -18,6 +19,7 @@ export const projects: Project[] = [
     liveUrl: "https://sudoku-lac-nine.vercel.app",
     repoUrl: "https://github.com/brentfsienko/sudoku",
     stack: ["Next.js", "Liveblocks", "Supabase", "TypeScript"],
+    logoSrc: "/art/sudoku-logo.jpg",
   },
   {
     slug: "benchmark",
@@ -28,6 +30,7 @@ export const projects: Project[] = [
     liveUrl: "https://benchmark.rest",
     repoUrl: null,
     stack: ["Next.js", "Supabase", "Leaflet", "PWA"],
+    logoSrc: "/art/benchmark-logo.png",
   },
 ];
 

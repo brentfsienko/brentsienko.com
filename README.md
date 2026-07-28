@@ -2,53 +2,50 @@
 
 Personal site — trees, bees, and a password-gated blog editor.
 
-**Live domain (planned):** [https://brentsienko.com](https://brentsienko.com)
+**Live:** [https://brentsienko-com.vercel.app](https://brentsienko-com.vercel.app) · domain planned: [https://brentsienko.com](https://brentsienko.com)
 
 ## Stack
 
 - Next.js (App Router) + TypeScript + Tailwind CSS v4
 - JetBrains Mono
-- Supabase Postgres for blog posts
+- **Vercel Blob** for blog posts (private JSON blobs)
 - Shared-password admin at `/blog/write`
 
 ## Local development
 
 ```bash
 cp .env.example .env.local
-# fill in Supabase + blog password/secret
 npm install
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Blog database
+### Blog storage (Vercel Blob)
 
-1. Create a Supabase project (or reuse one).
-2. SQL Editor → run [`supabase/posts.sql`](./supabase/posts.sql).
-3. Copy **Project URL** → `NEXT_PUBLIC_SUPABASE_URL`.
-4. Copy **service_role** key → `SUPABASE_SERVICE_ROLE_KEY` (server only; never expose to the browser).
+1. In the [Vercel dashboard](https://vercel.com/dashboard) → your project → **Storage** → create a **Blob** store (or run `vercel blob create-store` from this repo).
+2. Connect it to the project — Vercel sets `BLOB_READ_WRITE_TOKEN`.
+3. Pull env locally: `vercel env pull .env.local`
+4. Also set:
+   - `BLOG_ADMIN_PASSWORD` — unlocks `/blog/write`
+   - `BLOG_SESSION_SECRET` — e.g. `openssl rand -base64 32`
 
-Set `BLOG_ADMIN_PASSWORD` and a long `BLOG_SESSION_SECRET` (`openssl rand -base64 32`).
+Posts are stored as private blobs at `blog/posts/{slug}.json`.
 
-Post at `/blog/write` (not linked in the public nav).
+## Deploy
 
-## Deploy on Vercel
+Already linked to Vercel as `brentsienko-com`. Push to `main` or:
 
-1. Push this repo to GitHub (`brentfsienko/...`).
-2. Import the project in Vercel.
-3. Add env vars from `.env.example`.
-4. Deploy.
+```bash
+vercel deploy --prod
+```
 
 ### Custom domain `brentsienko.com`
 
-After purchase, in Vercel → Project → Settings → Domains:
+Vercel → Project → Settings → Domains → add apex + `www`, then at your registrar:
 
-1. Add `brentsienko.com` and `www.brentsienko.com`.
-2. At your registrar, set the DNS records Vercel shows (usually):
-   - **A** `@` → `76.76.21.21`
-   - **CNAME** `www` → `cname.vercel-dns.com`
-3. Wait for SSL; prefer apex `brentsienko.com` and redirect `www` → apex (or the reverse).
+- **A** `@` → `76.76.21.21`
+- **CNAME** `www` → `cname.vercel-dns.com`
 
 ## Routes
 

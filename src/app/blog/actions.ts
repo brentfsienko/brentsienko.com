@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -10,18 +11,14 @@ import {
   createSessionToken,
   isBlogAuthed,
 } from "@/lib/blog-auth";
-import { getPostBySlug, slugify } from "@/lib/posts";
-import { getSupabase, isSupabaseConfigured, type Post } from "@/lib/supabase";
-
-async function getPostById(id: string): Promise<Post | null> {
-  const { data, error } = await getSupabase()
-    .from("posts")
-    .select("*")
-    .eq("id", id)
-    .maybeSingle();
-  if (error) throw error;
-  return (data as Post | null) ?? null;
-}
+import {
+  deletePost,
+  getPostById,
+  getPostBySlug,
+  isBlobConfigured,
+  savePost,
+  slugify,
+} from "@/lib/posts";
 
 export type ActionState = { error?: string; ok?: boolean };
 
@@ -60,8 +57,8 @@ export async function savePostAction(
   if (!(await isBlogAuthed())) {
     return { error: "Not authenticated." };
   }
-  if (!isSupabaseConfigured()) {
-    return { error: "Supabase is not configured." };
+  if (!isBlobConfigured()) {
+    return { error: "BLOB_READ_WRITE_TOKEN is not configured." };
   }
 
   const id = String(formData.get("id") ?? "").trim();
@@ -82,7 +79,8 @@ export async function savePostAction(
 
   const existing = id ? await getPostById(id) : null;
   const now = new Date().toISOString();
-  const row = {
+  const post = {
+    id: existing?.id ?? randomUUID(),
     title,
     slug,
     summary: summary || null,
@@ -94,17 +92,17 @@ export async function savePostAction(
       : (existing?.published_at ?? now),
   };
 
-  const sb = getSupabase();
-  if (id) {
-    const { error } = await sb.from("posts").update(row).eq("id", id);
-    if (error) return { error: error.message };
-  } else {
-    const { error } = await sb.from("posts").insert(row);
-    if (error) return { error: error.message };
+  try {
+    await savePost(post, existing?.slug);
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Failed to save." };
   }
 
   revalidatePath("/blog");
   revalidatePath(`/blog/${slug}`);
+  if (existing?.slug && existing.slug !== slug) {
+    revalidatePath(`/blog/${existing.slug}`);
+  }
   revalidatePath("/blog/write");
   redirect(`/blog/write/${slug}`);
 }
@@ -113,18 +111,16 @@ export async function deletePostAction(formData: FormData) {
   if (!(await isBlogAuthed())) {
     throw new Error("Not authenticated");
   }
-  if (!isSupabaseConfigured()) {
-    throw new Error("Supabase is not configured");
+  if (!isBlobConfigured()) {
+    throw new Error("BLOB_READ_WRITE_TOKEN is not configured");
   }
-  const id = String(formData.get("id") ?? "");
   const slug = String(formData.get("slug") ?? "");
-  if (!id) return;
+  if (!slug) return;
 
-  const { error } = await getSupabase().from("posts").delete().eq("id", id);
-  if (error) throw error;
+  await deletePost(slug);
 
   revalidatePath("/blog");
-  if (slug) revalidatePath(`/blog/${slug}`);
+  revalidatePath(`/blog/${slug}`);
   revalidatePath("/blog/write");
   redirect("/blog/write");
 }

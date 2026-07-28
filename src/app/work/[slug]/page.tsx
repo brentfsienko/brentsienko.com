@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PixelBee, PixelSun } from "@/components/PixelArt";
 import { getProject, projects } from "@/data/projects";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -28,12 +28,20 @@ export default async function ProjectPage({ params }: Props) {
         ← work
       </Link>
 
-      <div className="mt-6 flex items-start justify-between gap-4">
-        <h1 className="text-4xl font-bold tracking-tight">{project.name}</h1>
-        {slug === "sudoku" ? <PixelBee /> : <PixelSun />}
+      <div className="mt-6 flex items-start gap-5">
+        <Image
+          src={project.logoSrc}
+          alt={`${project.name} logo`}
+          width={88}
+          height={88}
+          className="pixel h-[88px] w-[88px] shrink-0 rounded-lg border-2 border-ink object-cover"
+        />
+        <div>
+          <h1 className="text-4xl font-bold tracking-tight">{project.name}</h1>
+          <p className="mt-3 text-lg text-ink-soft">{project.tagline}</p>
+        </div>
       </div>
 
-      <p className="mt-4 text-lg text-ink-soft">{project.tagline}</p>
       <p className="mt-6 leading-relaxed text-ink-soft">{project.description}</p>
 
       <p className="mt-8 text-xs uppercase tracking-widest text-ink-faint">

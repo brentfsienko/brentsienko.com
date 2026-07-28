@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PixelBee, PixelFlower } from "@/components/PixelArt";
-import { listPublishedPosts } from "@/lib/posts";
-import { isSupabaseConfigured } from "@/lib/supabase";
+import { listPublishedPosts, isBlobConfigured } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -11,7 +10,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function BlogIndexPage() {
-  const configured = isSupabaseConfigured();
+  const configured = isBlobConfigured();
   const posts = configured ? await listPublishedPosts() : [];
 
   return (
@@ -24,7 +23,8 @@ export default async function BlogIndexPage() {
 
       {!configured && (
         <p className="border-2 border-dashed border-ink-faint p-4 text-sm text-ink-soft">
-          Blog storage isn&apos;t connected yet. Set Supabase env vars to enable
+          Blog storage isn&apos;t connected yet. Set{" "}
+          <code className="text-ink">BLOB_READ_WRITE_TOKEN</code> to enable
           posts.
         </p>
       )}

@@ -6,7 +6,7 @@ import {
   savePostAction,
   type ActionState,
 } from "@/app/blog/actions";
-import type { Post } from "@/lib/supabase";
+import type { Post } from "@/lib/posts";
 import { slugify } from "@/lib/posts-client";
 
 const initial: ActionState = {};

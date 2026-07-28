@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
-import {
-  PixelFlower,
-  PixelGecko,
-  PixelSun,
-  SketchTree,
-} from "@/components/PixelArt";
+import Image from "next/image";
+import { PixelFlower } from "@/components/PixelArt";
 
 export const metadata: Metadata = {
   title: "About",
@@ -53,13 +49,19 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <div className="hidden flex-col items-center gap-4 lg:flex">
-        <div className="flex items-start gap-3">
-          <PixelSun />
-          <PixelFlower color="purple" />
+      <div className="relative hidden w-[220px] lg:block">
+        <Image
+          src="/art/tree.png"
+          alt=""
+          width={220}
+          height={220}
+          className="pixel h-auto w-full object-contain"
+        />
+        <div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-end gap-1">
+          <PixelFlower color="purple" width={22} height={28} />
+          <PixelFlower color="rose" width={26} height={34} />
+          <PixelFlower color="purple" width={20} height={26} />
         </div>
-        <SketchTree width={140} height={180} />
-        <PixelGecko width={80} height={52} />
       </div>
     </div>
   );

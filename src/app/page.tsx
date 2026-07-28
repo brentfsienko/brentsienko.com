@@ -1,33 +1,22 @@
+import Image from "next/image";
 import Link from "next/link";
-import {
-  PixelBee,
-  PixelFlower,
-  PixelGecko,
-  PixelSun,
-  SketchTree,
-} from "@/components/PixelArt";
+import { PixelBee, PixelFlower, PixelSun } from "@/components/PixelArt";
 
 export default function HomePage() {
   return (
-    <section className="relative min-h-[calc(100vh-8rem)] overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_70%_40%,var(--paper-deep)_0%,transparent_55%)]" />
-
-      <div className="pointer-events-none absolute left-6 top-24 hidden sm:block">
-        <PixelFlower color="purple" width={28} height={36} />
-      </div>
-      <div className="pointer-events-none absolute right-10 top-36 hidden md:block">
-        <PixelFlower color="rose" width={24} height={32} />
-      </div>
-      <div className="pointer-events-none absolute bottom-28 left-[12%] hidden lg:block">
-        <PixelFlower color="purple" width={22} height={28} />
+    <section className="relative min-h-[calc(100vh-7.5rem)] overflow-hidden">
+      {/* Backmost: large sun */}
+      <div
+        className="pointer-events-none absolute -right-[12%] -top-[6%] z-0 sm:-right-[6%] sm:-top-[8%] lg:right-[2%] lg:-top-[10%]"
+        aria-hidden
+      >
+        <PixelSun width={420} height={420} className="sm:scale-110 lg:scale-125" />
       </div>
 
-      <div className="relative mx-auto grid max-w-5xl items-end gap-10 px-4 pb-16 pt-10 sm:px-6 sm:pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:pb-20 lg:pt-8">
-        <div className="relative z-10">
-          <p className="mb-4 flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-ink-faint">
-            <PixelSun width={28} height={28} />
-            <PixelFlower color="purple" width={20} height={26} />
-          </p>
+      <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_at_65%_35%,transparent_20%,var(--paper)_75%)]" />
+
+      <div className="relative z-10 mx-auto grid min-h-[calc(100vh-7.5rem)] max-w-6xl items-center gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-4 lg:py-0">
+        <div className="relative">
           <h1 className="text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
             brent
             <br />
@@ -46,29 +35,35 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="relative flex justify-center lg:justify-end">
-          <div className="relative">
-            <SketchTree width={280} height={360} className="sm:w-[320px] sm:h-[400px]" />
-            <div className="absolute -right-2 top-8 sm:right-4">
+        <div className="relative flex h-[min(78vh,640px)] items-end justify-center lg:h-[min(88vh,760px)] lg:justify-end">
+          {/* Tree — nearly full column height */}
+          <div className="relative z-[2] flex h-full w-full max-w-[420px] flex-col items-center justify-end lg:max-w-[520px]">
+            <div className="absolute right-[8%] top-[12%] z-[3]">
               <PixelBee width={48} height={34} />
             </div>
-            <div className="absolute bottom-20 left-0 sm:-left-2">
-              <PixelFlower color="rose" width={36} height={48} />
-            </div>
-            <div className="absolute bottom-24 right-2 sm:right-6">
-              <PixelFlower color="purple" width={30} height={40} />
-            </div>
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 sm:left-[42%]">
-              <PixelGecko width={88} height={58} />
-            </div>
-            <div className="absolute left-8 top-20 hidden sm:block">
-              <PixelFlower color="amber" width={22} height={28} />
+
+            <Image
+              src="/art/tree.png"
+              alt=""
+              width={520}
+              height={520}
+              priority
+              className="pixel h-[85%] w-auto max-w-full object-contain object-bottom"
+            />
+
+            {/* Flowers only at the base */}
+            <div className="absolute bottom-[2%] left-[8%] z-[3] flex items-end gap-2 sm:left-[12%] sm:gap-3">
+              <PixelFlower color="purple" width={34} height={44} />
+              <PixelFlower color="rose" width={40} height={52} />
+              <PixelFlower color="purple" width={28} height={36} />
+              <PixelFlower color="amber" width={24} height={32} />
+              <PixelFlower color="rose" width={30} height={40} />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-2 bg-ink" />
+      <div className="absolute bottom-0 left-0 right-0 z-10 h-2 bg-ink" />
     </section>
   );
 }

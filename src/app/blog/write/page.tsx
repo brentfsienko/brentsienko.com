@@ -4,8 +4,7 @@ import { LoginForm } from "@/components/LoginForm";
 import { PostEditor } from "@/components/PostEditor";
 import { logoutAction } from "@/app/blog/actions";
 import { isBlogAuthed } from "@/lib/blog-auth";
-import { listAllPosts } from "@/lib/posts";
-import { isSupabaseConfigured } from "@/lib/supabase";
+import { listAllPosts, isBlobConfigured } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: "Write",
@@ -25,7 +24,7 @@ export default async function BlogWritePage() {
     );
   }
 
-  const configured = isSupabaseConfigured();
+  const configured = isBlobConfigured();
   const posts = configured ? await listAllPosts() : [];
 
   return (
@@ -41,7 +40,8 @@ export default async function BlogWritePage() {
 
       {!configured && (
         <p className="mb-8 border-2 border-dashed border-ink-faint p-4 text-sm text-ink-soft">
-          Add Supabase credentials to save posts.
+          Add <code className="text-ink">BLOB_READ_WRITE_TOKEN</code> to save
+          posts.
         </p>
       )}
 
