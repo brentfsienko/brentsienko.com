@@ -3,46 +3,34 @@ import { ImageResponse } from "next/og";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-/** Apple touch icon — larger pixel bee on paper. */
+/** Apple touch icon — one wing, two vertical stripes (same grid as PixelBee). */
 export default function AppleIcon() {
   const cells: { x: number; y: number; color: string }[] = [
-    { x: 4, y: 0, color: "#8a8a8a" },
-    { x: 5, y: 0, color: "#8a8a8a" },
-    { x: 6, y: 0, color: "#8a8a8a" },
-    { x: 7, y: 0, color: "#8a8a8a" },
-    { x: 12, y: 0, color: "#8a8a8a" },
-    { x: 13, y: 0, color: "#8a8a8a" },
-    { x: 14, y: 0, color: "#8a8a8a" },
-    { x: 15, y: 0, color: "#8a8a8a" },
-    { x: 2, y: 2, color: "#cfcfcf" },
-    { x: 3, y: 2, color: "#cfcfcf" },
-    { x: 4, y: 2, color: "#cfcfcf" },
-    { x: 5, y: 2, color: "#cfcfcf" },
-    { x: 14, y: 2, color: "#cfcfcf" },
-    { x: 15, y: 2, color: "#cfcfcf" },
-    { x: 16, y: 2, color: "#cfcfcf" },
-    { x: 17, y: 2, color: "#cfcfcf" },
+    // one wing
+    ...[8, 9, 10, 11, 12, 13].flatMap((x) => [
+      { x, y: 0, color: "#8a8a8a" },
+      { x, y: 1, color: "#8a8a8a" },
+    ]),
+    ...[9, 10, 11, 12, 13].flatMap((x) => [
+      { x, y: 2, color: "#cfcfcf" },
+      { x, y: 3, color: "#cfcfcf" },
+    ]),
+    // head
+    ...[2, 3, 4, 5].flatMap((x) =>
+      [5, 6, 7, 8, 9].map((y) => ({ x, y, color: "#1a1a1a" })),
+    ),
+    // yellow body
+    ...[6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].flatMap((x) =>
+      [5, 6, 7, 8, 9, 10].map((y) => ({ x, y, color: "#f0c840" })),
+    ),
+    // two vertical stripes
+    ...[9, 10].flatMap((x) =>
+      [5, 6, 7, 8, 9, 10].map((y) => ({ x, y, color: "#1a1a1a" })),
+    ),
+    ...[13, 14].flatMap((x) =>
+      [5, 6, 7, 8, 9, 10].map((y) => ({ x, y, color: "#1a1a1a" })),
+    ),
   ];
-
-  for (const x of [6, 7, 8, 9, 10, 11, 12, 13]) {
-    for (const [y, color] of [
-      [4, "#1a1a1a"],
-      [5, "#1a1a1a"],
-      [6, "#f0c840"],
-      [7, "#f0c840"],
-      [8, "#1a1a1a"],
-      [9, "#1a1a1a"],
-      [10, "#f0c840"],
-      [11, "#f0c840"],
-    ] as const) {
-      cells.push({ x, y, color });
-    }
-  }
-  for (const x of [2, 3, 4, 5]) {
-    for (const y of [6, 7, 8, 9]) {
-      cells.push({ x, y, color: "#1a1a1a" });
-    }
-  }
 
   const map = new Map<string, string>();
   for (const c of cells) map.set(`${c.x},${c.y}`, c.color);
