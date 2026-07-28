@@ -137,6 +137,27 @@ a:hover {
   animation-iteration-count: infinite;
 }
 
+/* ── Bee flight trail ── */
+@keyframes bee-dash-fade {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.bee-dash {
+  position: absolute;
+  width: 7px;
+  height: 2px;
+  margin: 0;
+  border-radius: 1px;
+  background: var(--ink-faint);
+  animation: bee-dash-fade 1s ease-out forwards;
+  will-change: opacity;
+}
+
 .bee-bubble {
   /* Prefer the full line width; only wrap once we hit the viewport cap */
   width: max-content;
