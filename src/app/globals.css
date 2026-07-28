@@ -114,18 +114,27 @@ a:hover {
   0% {
     transform: translate(0, 0) rotate(0deg);
   }
-  25% {
-    transform: translate(12px, -8px) rotate(8deg);
+  20% {
+    transform: translate(18px, -14px) rotate(10deg);
   }
-  50% {
-    transform: translate(22px, 4px) rotate(-4deg);
+  40% {
+    transform: translate(36px, 6px) rotate(-6deg);
   }
-  75% {
-    transform: translate(8px, 10px) rotate(6deg);
+  60% {
+    transform: translate(14px, 18px) rotate(8deg);
+  }
+  80% {
+    transform: translate(-10px, 4px) rotate(-4deg);
   }
   100% {
     transform: translate(0, 0) rotate(0deg);
   }
+}
+
+.bee-fly {
+  animation-name: bee-path;
+  animation-timing-function: steps(6);
+  animation-iteration-count: infinite;
 }
 
 @keyframes ink-underline {

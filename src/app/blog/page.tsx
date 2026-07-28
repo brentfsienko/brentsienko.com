@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PixelBee, PixelFlower } from "@/components/PixelArt";
+import { PixelBee } from "@/components/PixelArt";
 import { listPublishedPosts, isBlobConfigured } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -18,7 +18,6 @@ export default async function BlogIndexPage() {
       <div className="mb-10 flex items-center gap-3">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">blog</h1>
         <PixelBee width={36} height={24} />
-        <PixelFlower color="purple" width={22} height={28} />
       </div>
 
       {!configured && (

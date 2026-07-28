@@ -2,6 +2,7 @@ type Props = {
   className?: string;
   width?: number;
   height?: number;
+  style?: React.CSSProperties;
 };
 
 type FlowerProps = Props & {
@@ -180,7 +181,7 @@ export function PixelFlower({
 export function PixelBee({ className = "", width = 40, height = 28 }: Props) {
   return (
     <svg
-      className={`pixel bee-fly ${className}`}
+      className={`pixel ${className.includes("bee-fly") || className.includes("!animate-none") ? className : `bee-fly ${className}`}`}
       width={width}
       height={height}
       viewBox="0 0 20 14"
