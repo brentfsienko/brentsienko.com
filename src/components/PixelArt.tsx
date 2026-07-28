@@ -201,6 +201,39 @@ export function PixelBee({ className = "", width = 40, height = 28 }: Props) {
   );
 }
 
+/** Pixel beehive for the wandering bee. */
+export function PixelHive({ className = "", width = 56, height = 64 }: Props) {
+  return (
+    <svg
+      className={`pixel ${className}`}
+      width={width}
+      height={height}
+      viewBox="0 0 28 32"
+      shapeRendering="crispEdges"
+      aria-hidden
+    >
+      {/* hanging branch */}
+      <rect x="10" y="0" width="8" height="2" fill="#4a4a4a" />
+      <rect x="12" y="2" width="4" height="2" fill="#1a1a1a" />
+      {/* hive tiers */}
+      <rect x="8" y="4" width="12" height="3" fill="#e8a317" />
+      <rect x="6" y="7" width="16" height="3" fill="#f0c840" />
+      <rect x="4" y="10" width="20" height="4" fill="#e8a317" />
+      <rect x="3" y="14" width="22" height="4" fill="#f0c840" />
+      <rect x="4" y="18" width="20" height="4" fill="#e8a317" />
+      <rect x="6" y="22" width="16" height="3" fill="#f0c840" />
+      <rect x="8" y="25" width="12" height="3" fill="#d4920f" />
+      {/* entrance */}
+      <rect x="12" y="20" width="4" height="4" fill="#1a1a1a" />
+      {/* outline ticks */}
+      <rect x="4" y="10" width="2" height="2" fill="#1a1a1a" />
+      <rect x="22" y="10" width="2" height="2" fill="#1a1a1a" />
+      <rect x="3" y="16" width="2" height="2" fill="#1a1a1a" />
+      <rect x="23" y="16" width="2" height="2" fill="#1a1a1a" />
+    </svg>
+  );
+}
+
 /** Green gecko perched on a small rock. */
 export function PixelGecko({ className = "", width = 72, height = 48 }: Props) {
   return (
