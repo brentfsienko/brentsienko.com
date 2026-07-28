@@ -103,13 +103,18 @@ export function WanderingBee() {
 
     type TargetKind = "wander" | "hive" | "chat";
 
+    let legsSinceChat = 99;
+
     const pickTarget = (
       from: Point,
       allowHive: boolean,
     ): { point: Point; kind: TargetKind } => {
       const roll = Math.random();
-      if (roll < 0.22) return { point: centerSpot(), kind: "chat" };
-      if (allowHive && roll < 0.22 + 0.22) return { point: hive(), kind: "hive" };
+      // Chat sparingly — only after a few other legs, ~8% when eligible
+      if (legsSinceChat >= 3 && roll < 0.08) {
+        return { point: centerSpot(), kind: "chat" };
+      }
+      if (allowHive && roll < 0.08 + 0.2) return { point: hive(), kind: "hive" };
       let next = randomSpot();
       let tries = 0;
       while (
@@ -162,6 +167,8 @@ export function WanderingBee() {
       const allowHive = !justLeftHive;
       justLeftHive = false;
       const { point: target, kind } = pickTarget(posRef.current, allowHive);
+      if (kind === "chat") legsSinceChat = 0;
+      else legsSinceChat += 1;
 
       flyTo(target, () => {
         if (kind === "hive") {
@@ -240,7 +247,7 @@ export function WanderingBee() {
         >
           {quip ? (
             <div
-              className="bee-bubble absolute left-1/2 bottom-full mb-2 -translate-x-1/2 whitespace-nowrap"
+              className="bee-bubble absolute left-1/2 bottom-full mb-2 -translate-x-1/2"
               role="status"
             >
               {quip}
