@@ -1,16 +1,27 @@
 import Image from "next/image";
 import Link from "next/link";
+import { PixelTree } from "@/components/PixelArt";
 
 export default function HomePage() {
   return (
     <section className="home-scene relative min-h-[calc(100vh-7.5rem)] overflow-hidden">
+      {/* Pixel tree — left edge, canopy overhangs the title (behind copy). */}
+      <div
+        className="pointer-events-none absolute -left-[10%] bottom-2 -z-10 w-[min(88vw,520px)] sm:-left-[6%] sm:w-[min(70vw,560px)] lg:-left-[3%] lg:w-[580px]"
+        aria-hidden
+      >
+        <PixelTree className="h-auto w-full" width={580} height={652} />
+      </div>
+
+      {/* Chair sits on the roots, just right of the trunk. */}
       <Image
         src="/art/pixel-chair.png"
         alt=""
         width={1024}
         height={1024}
         aria-hidden
-        className="pixel pointer-events-none absolute bottom-6 left-4 z-[1] w-[84px] max-w-none select-none sm:bottom-8 sm:left-6 sm:w-[108px] lg:w-[120px]"
+        className="pixel pointer-events-none absolute bottom-7 z-[1] w-[84px] max-w-none select-none sm:bottom-9 sm:w-[108px] lg:w-[120px]"
+        style={{ left: "clamp(10.5rem, 32vw, 19rem)" }}
         sizes="120px"
       />
 
