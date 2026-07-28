@@ -189,17 +189,18 @@ export function PixelBee({ className = "", width = 40, height = 28 }: Props) {
       aria-hidden
     >
       {/* one wing */}
-      <rect x="8" y="0" width="6" height="2" fill="#8a8a8a" />
-      <rect x="9" y="2" width="5" height="2" fill="#cfcfcf" />
-      {/* head */}
-      <rect x="2" y="5" width="4" height="5" fill="#1a1a1a" />
+      <rect x="7" y="0" width="6" height="2" fill="#8a8a8a" />
+      <rect x="8" y="2" width="5" height="2" fill="#cfcfcf" />
+      {/* triangle stinger (replaces the old black square tip) */}
+      <polygon points="4,6 1,8 4,10" fill="#1a1a1a" />
       {/* yellow body */}
-      <rect x="6" y="5" width="12" height="6" fill="#f0c840" />
+      <rect x="4" y="5" width="10" height="6" fill="#f0c840" />
       {/* two vertical stripes */}
-      <rect x="9" y="5" width="2" height="6" fill="#1a1a1a" />
-      <rect x="13" y="5" width="2" height="6" fill="#1a1a1a" />
-      {/* stinger */}
-      <polygon points="18,6.5 20,8 18,9.5" fill="#1a1a1a" />
+      <rect x="6" y="5" width="2" height="6" fill="#1a1a1a" />
+      <rect x="10" y="5" width="2" height="6" fill="#1a1a1a" />
+      {/* head with eye */}
+      <rect x="14" y="5" width="4" height="5" fill="#1a1a1a" />
+      <rect x="15" y="6" width="2" height="2" fill="#f0c840" />
     </svg>
   );
 }

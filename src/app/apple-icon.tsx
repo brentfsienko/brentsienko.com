@@ -3,38 +3,42 @@ import { ImageResponse } from "next/og";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-/** Apple touch icon — one wing, two vertical stripes (same grid as PixelBee). */
+/** Apple touch icon — triangle stinger (not a black square), head with eye. */
 export default function AppleIcon() {
   const cells: { x: number; y: number; color: string }[] = [
-    // one wing
-    ...[8, 9, 10, 11, 12, 13].flatMap((x) => [
+    ...[7, 8, 9, 10, 11, 12].flatMap((x) => [
       { x, y: 0, color: "#8a8a8a" },
       { x, y: 1, color: "#8a8a8a" },
     ]),
-    ...[9, 10, 11, 12, 13].flatMap((x) => [
+    ...[8, 9, 10, 11, 12].flatMap((x) => [
       { x, y: 2, color: "#cfcfcf" },
       { x, y: 3, color: "#cfcfcf" },
     ]),
-    // head
-    ...[2, 3, 4, 5].flatMap((x) =>
-      [5, 6, 7, 8, 9].map((y) => ({ x, y, color: "#1a1a1a" })),
-    ),
-    // yellow body
-    ...[6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].flatMap((x) =>
+    { x: 3, y: 6, color: "#1a1a1a" },
+    { x: 2, y: 7, color: "#1a1a1a" },
+    { x: 3, y: 7, color: "#1a1a1a" },
+    { x: 1, y: 8, color: "#1a1a1a" },
+    { x: 2, y: 8, color: "#1a1a1a" },
+    { x: 3, y: 8, color: "#1a1a1a" },
+    { x: 2, y: 9, color: "#1a1a1a" },
+    { x: 3, y: 9, color: "#1a1a1a" },
+    { x: 3, y: 10, color: "#1a1a1a" },
+    ...[4, 5, 6, 7, 8, 9, 10, 11, 12, 13].flatMap((x) =>
       [5, 6, 7, 8, 9, 10].map((y) => ({ x, y, color: "#f0c840" })),
     ),
-    // two vertical stripes
-    ...[9, 10].flatMap((x) =>
+    ...[6, 7].flatMap((x) =>
       [5, 6, 7, 8, 9, 10].map((y) => ({ x, y, color: "#1a1a1a" })),
     ),
-    ...[13, 14].flatMap((x) =>
+    ...[10, 11].flatMap((x) =>
       [5, 6, 7, 8, 9, 10].map((y) => ({ x, y, color: "#1a1a1a" })),
     ),
-    // stinger (small triangle)
-    { x: 18, y: 6, color: "#1a1a1a" },
-    { x: 18, y: 7, color: "#1a1a1a" },
-    { x: 19, y: 7, color: "#1a1a1a" },
-    { x: 18, y: 8, color: "#1a1a1a" },
+    ...[14, 15, 16, 17].flatMap((x) =>
+      [5, 6, 7, 8, 9].map((y) => ({ x, y, color: "#1a1a1a" })),
+    ),
+    { x: 15, y: 6, color: "#f0c840" },
+    { x: 16, y: 6, color: "#f0c840" },
+    { x: 15, y: 7, color: "#f0c840" },
+    { x: 16, y: 7, color: "#f0c840" },
   ];
 
   const map = new Map<string, string>();
