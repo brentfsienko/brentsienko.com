@@ -173,10 +173,6 @@ a:hover {
   animation: leaf-flicker 2.4s steps(2) infinite;
 }
 
-.bee-fly {
-  animation: bee-path 4s steps(6) infinite;
-}
-
 .btn {
   display: inline-flex;
   align-items: center;
