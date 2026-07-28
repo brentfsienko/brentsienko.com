@@ -14,7 +14,7 @@ export default function WorkPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">work</h1>
           <p className="mt-3 max-w-xl text-ink-soft">
-            Two things I&apos;m building in the open — plus everything else on{" "}
+            Some things I&apos;ve been working on — plus everything else on{" "}
             <a
               href="https://github.com/brentfsienko"
               target="_blank"
@@ -25,7 +25,10 @@ export default function WorkPage() {
             .
           </p>
         </div>
-        <PixelFlower className="mb-1 hidden sm:block" />
+        <div className="mb-1 hidden items-end gap-2 sm:flex">
+          <PixelFlower color="purple" />
+          <PixelFlower color="rose" width={28} height={36} />
+        </div>
       </div>
 
       <ul className="divide-y-2 divide-ink border-y-2 border-ink">

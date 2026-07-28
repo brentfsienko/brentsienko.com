@@ -50,7 +50,7 @@ export function SiteFooter() {
   return (
     <footer className="relative z-10 mt-auto border-t-2 border-ink">
       <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-6 text-xs text-ink-soft sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <p>graphite on paper · a few bees</p>
+        <p>trees · bees · a good chair</p>
         <div className="flex gap-4">
           <a
             href="https://github.com/brentfsienko"

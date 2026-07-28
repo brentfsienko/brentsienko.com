@@ -15,11 +15,11 @@ export const metadata: Metadata = {
     template: "%s · Brent Sienko",
   },
   description:
-    "Software engineer. Building Sudoku, Benchmark, and other small tools. Pencil sketch, a few pixels.",
+    "Friend of trees and bees and a good chair. Building Sudoku, Benchmark, and other small tools.",
   metadataBase: new URL("https://brentsienko.com"),
   openGraph: {
     title: "Brent Sienko",
-    description: "Software engineer. Sketchbook portfolio.",
+    description: "Friend of trees and bees and a good chair.",
     url: "https://brentsienko.com",
     siteName: "Brent Sienko",
     type: "website",

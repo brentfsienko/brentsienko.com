@@ -9,7 +9,9 @@
   --rule: #2a2a2a;
   --sun: #e8a317;
   --flower: #c43b5a;
+  --flower-purple: #b8a0d4;
   --leaf: #3d7a4a;
+  --gecko: #3d9a60;
   --bee: #f0c840;
   --bee-dark: #1a1a1a;
 }
@@ -23,7 +25,9 @@
   --color-rule: var(--rule);
   --color-sun: var(--sun);
   --color-flower: var(--flower);
+  --color-flower-purple: var(--flower-purple);
   --color-leaf: var(--leaf);
+  --color-gecko: var(--gecko);
   --color-bee: var(--bee);
   --font-mono: var(--font-jetbrains);
 }

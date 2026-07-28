@@ -1,6 +1,6 @@
 # brentsienko.com
 
-Personal site — pencil-sketch / 8-bit portfolio with a password-gated blog editor.
+Personal site — trees, bees, and a password-gated blog editor.
 
 **Live domain (planned):** [https://brentsienko.com](https://brentsienko.com)
 
