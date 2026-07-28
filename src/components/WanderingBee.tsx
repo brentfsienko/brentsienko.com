@@ -4,9 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { PixelBee } from "@/components/PixelArt";
 
 type Point = { x: number; y: number };
+type Dash = { id: number; x: number; y: number; angle: number };
 
 const BEE_W = 44;
 const BEE_H = 32;
+const DASH_GAP = 14;
+const TRAIL_MS = 1000;
 
 const QUIPS = [
   "bzzzzz",
@@ -47,10 +50,13 @@ export function WanderingBee() {
   const [facingLeft, setFacingLeft] = useState(false);
   const [visible, setVisible] = useState(true);
   const [quip, setQuip] = useState<string | null>(null);
+  const [trail, setTrail] = useState<Dash[]>([]);
   const [reducedMotion, setReducedMotion] = useState(false);
   const posRef = useRef(pos);
   const rafRef = useRef<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dashTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const dashIdRef = useRef(0);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -62,6 +68,32 @@ export function WanderingBee() {
 
   useEffect(() => {
     if (reducedMotion) return;
+
+    const clearTrail = () => {
+      for (const t of dashTimeoutsRef.current) clearTimeout(t);
+      dashTimeoutsRef.current = [];
+      setTrail([]);
+    };
+
+    const dropDash = (at: Point, prev: Point) => {
+      const dx = at.x - prev.x;
+      const dy = at.y - prev.y;
+      const id = ++dashIdRef.current;
+      const dash: Dash = {
+        id,
+        x: at.x + BEE_W / 2,
+        y: at.y + BEE_H / 2,
+        angle: (Math.atan2(dy, dx) * 180) / Math.PI,
+      };
+      setTrail((cur) => [...cur.slice(-24), dash]);
+      const timeout = setTimeout(() => {
+        setTrail((cur) => cur.filter((d) => d.id !== id));
+        dashTimeoutsRef.current = dashTimeoutsRef.current.filter(
+          (t) => t !== timeout,
+        );
+      }, TRAIL_MS);
+      dashTimeoutsRef.current.push(timeout);
+    };
 
     /** Bee top-left so its center lands on the hive entrance hole. */
     const hive = (): Point => {
@@ -141,6 +173,7 @@ export function WanderingBee() {
       const start = performance.now();
       const wobbleAmp = 8 + Math.random() * 12;
       const wobbleFreq = 2.5 + Math.random() * 2;
+      let lastDashAt = { ...from };
       setFacingLeft(to.x < from.x);
       setVisible(true);
       setQuip(null);
@@ -155,6 +188,12 @@ export function WanderingBee() {
           x: from.x + (to.x - from.x) * e,
           y: from.y + (to.y - from.y) * e + wobble,
         };
+        if (
+          Math.hypot(next.x - lastDashAt.x, next.y - lastDashAt.y) >= DASH_GAP
+        ) {
+          dropDash(next, lastDashAt);
+          lastDashAt = { ...next };
+        }
         posRef.current = next;
         setPos(next);
         if (t < 1) {
@@ -178,6 +217,7 @@ export function WanderingBee() {
         if (kind === "hive") {
           setVisible(false);
           setQuip(null);
+          clearTrail();
           const dock = hive();
           posRef.current = dock;
           setPos(dock);
@@ -209,6 +249,7 @@ export function WanderingBee() {
     setPos(start);
     setVisible(false);
     setQuip(null);
+    clearTrail();
     timeoutRef.current = setTimeout(() => {
       if (cancelled) return;
       justLeftHive = true;
@@ -220,11 +261,26 @@ export function WanderingBee() {
       cancelled = true;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      for (const t of dashTimeoutsRef.current) clearTimeout(t);
+      dashTimeoutsRef.current = [];
     };
   }, [reducedMotion]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[40] overflow-hidden" aria-hidden>
+      {!reducedMotion &&
+        trail.map((d) => (
+          <div
+            key={d.id}
+            className="bee-dash"
+            style={{
+              left: d.x,
+              top: d.y,
+              transform: `translate(-50%, -50%) rotate(${d.angle}deg)`,
+            }}
+          />
+        ))}
+
       {!reducedMotion && visible && (
         <div
           className="absolute will-change-transform"
