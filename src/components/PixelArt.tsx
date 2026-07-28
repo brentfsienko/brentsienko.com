@@ -121,8 +121,110 @@ export function SketchTree({ className = "", width = 280, height = 360 }: Props)
   );
 }
 
-/** @deprecated alias — prefer SketchTree */
-export const PixelTree = SketchTree;
+/**
+ * Pixel tree — same crispEdges / rect style as the bee & hive.
+ * Wide layered canopy, thick trunk, wrapping vine, hanging vines, spreading roots.
+ */
+export function PixelTree({ className = "", width = 320, height = 360 }: Props) {
+  const G = "#3d7a4a";
+  const G2 = "#4a8f58";
+  const G3 = "#2d5a38";
+  const G4 = "#5fa86c";
+  const B = "#8b6914";
+  const B2 = "#6b4f12";
+  const B3 = "#c4a35a";
+  const Ink = "#1a1a1a";
+
+  return (
+    <svg
+      className={`pixel ${className}`}
+      width={width}
+      height={height}
+      viewBox="0 0 64 72"
+      shapeRendering="crispEdges"
+      aria-hidden
+    >
+      {/* ── canopy: stacked cloud tiers (top → bottom) ── */}
+      <rect x="18" y="2" width="22" height="3" fill={G4} />
+      <rect x="14" y="4" width="30" height="3" fill={G2} />
+      <rect x="10" y="6" width="16" height="4" fill={G} />
+      <rect x="24" y="6" width="22" height="4" fill={G2} />
+      <rect x="8" y="9" width="20" height="4" fill={G3} />
+      <rect x="26" y="9" width="24" height="4" fill={G} />
+      <rect x="6" y="12" width="18" height="4" fill={G2} />
+      <rect x="22" y="12" width="14" height="4" fill={G4} />
+      <rect x="34" y="12" width="18" height="4" fill={G2} />
+      <rect x="4" y="15" width="22" height="4" fill={G} />
+      <rect x="24" y="15" width="28" height="4" fill={G3} />
+      <rect x="2" y="18" width="16" height="4" fill={G3} />
+      <rect x="16" y="18" width="20" height="4" fill={G2} />
+      <rect x="34" y="18" width="20" height="4" fill={G} />
+      <rect x="6" y="21" width="18" height="3" fill={G} />
+      <rect x="22" y="21" width="16" height="3" fill={G3} />
+      <rect x="36" y="21" width="16" height="3" fill={G2} />
+      {/* canopy outline ticks */}
+      <rect x="18" y="1" width="4" height="1" fill={Ink} />
+      <rect x="36" y="1" width="4" height="1" fill={Ink} />
+      <rect x="2" y="17" width="2" height="2" fill={Ink} />
+      <rect x="52" y="17" width="2" height="2" fill={Ink} />
+
+      {/* ── hanging vines from canopy ── */}
+      <rect x="8" y="24" width="1" height="8" fill={G3} />
+      <rect x="7" y="30" width="3" height="1" fill={G} />
+      <rect x="14" y="24" width="1" height="6" fill={G3} />
+      <rect x="13" y="29" width="3" height="1" fill={G} />
+      <rect x="14" y="30" width="1" height="4" fill={G3} />
+      <rect x="40" y="24" width="1" height="10" fill={G3} />
+      <rect x="39" y="32" width="3" height="1" fill={G} />
+      <rect x="40" y="33" width="1" height="3" fill={G3} />
+      <rect x="48" y="24" width="1" height="7" fill={G3} />
+      <rect x="47" y="29" width="3" height="1" fill={G} />
+      <rect x="48" y="30" width="1" height="5" fill={G3} />
+
+      {/* ── trunk ── */}
+      <rect x="28" y="24" width="8" height="6" fill={B} />
+      <rect x="27" y="30" width="10" height="8" fill={B2} />
+      <rect x="28" y="38" width="8" height="10" fill={B} />
+      <rect x="27" y="48" width="10" height="8" fill={B2} />
+      <rect x="29" y="26" width="2" height="28" fill={B3} />
+      <rect x="34" y="32" width="2" height="20" fill={Ink} opacity="0.35" />
+
+      {/* vine wrapping trunk */}
+      <rect x="26" y="34" width="4" height="2" fill={G} />
+      <rect x="30" y="36" width="4" height="2" fill={G2} />
+      <rect x="34" y="38" width="4" height="2" fill={G} />
+      <rect x="28" y="42" width="4" height="2" fill={G3} />
+      <rect x="26" y="46" width="4" height="2" fill={G} />
+      <rect x="30" y="48" width="5" height="2" fill={G2} />
+
+      {/* ── roots ── */}
+      <rect x="24" y="56" width="16" height="3" fill={B2} />
+      <rect x="20" y="58" width="10" height="3" fill={B} />
+      <rect x="34" y="58" width="12" height="3" fill={B2} />
+      <rect x="14" y="60" width="12" height="3" fill={B2} />
+      <rect x="36" y="60" width="14" height="3" fill={B} />
+      <rect x="8" y="62" width="14" height="3" fill={B} />
+      <rect x="28" y="62" width="10" height="3" fill={B2} />
+      <rect x="42" y="62" width="12" height="3" fill={B2} />
+      <rect x="4" y="64" width="12" height="3" fill={B2} />
+      <rect x="18" y="64" width="10" height="3" fill={B} />
+      <rect x="34" y="64" width="10" height="3" fill={B} />
+      <rect x="48" y="64" width="10" height="3" fill={B} />
+      <rect x="2" y="66" width="8" height="3" fill={B} />
+      <rect x="12" y="66" width="6" height="2" fill={B2} />
+      <rect x="40" y="66" width="8" height="2" fill={B2} />
+      <rect x="52" y="66" width="8" height="3" fill={B2} />
+      {/* root tips */}
+      <rect x="1" y="68" width="4" height="2" fill={Ink} />
+      <rect x="20" y="67" width="3" height="2" fill={Ink} />
+      <rect x="44" y="67" width="3" height="2" fill={Ink} />
+      <rect x="58" y="68" width="4" height="2" fill={Ink} />
+    </svg>
+  );
+}
+
+/** @deprecated — prefer PixelTree for the site scene */
+export const PixelTreeSketch = SketchTree;
 
 export function PixelSun({ className = "", width = 48, height = 48 }: Props) {
   return (
