@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { WanderingBee } from "@/components/WanderingBee";
 import "./globals.css";
@@ -39,6 +40,7 @@ export default function RootLayout({
         <WanderingBee />
         <main className="relative z-10 flex-1">{children}</main>
         <SiteFooter />
+        <Analytics />
       </body>
     </html>
   );
