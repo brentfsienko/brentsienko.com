@@ -16,6 +16,7 @@ function easeInOut(t: number) {
 export function WanderingBee() {
   const [pos, setPos] = useState<Point>({ x: 80, y: 80 });
   const [facingLeft, setFacingLeft] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const posRef = useRef(pos);
   const rafRef = useRef<number | null>(null);
@@ -45,10 +46,8 @@ export function WanderingBee() {
       };
     };
 
-    const pickTarget = (from: Point): Point => {
-      // ~28% chance to visit the hive
-      if (Math.random() < 0.28) return hive();
-      // otherwise wander; bias away from current area a bit
+    const pickTarget = (from: Point, allowHive: boolean): Point => {
+      if (allowHive && Math.random() < 0.28) return hive();
       let next = randomSpot();
       let tries = 0;
       while (
@@ -62,6 +61,7 @@ export function WanderingBee() {
     };
 
     let cancelled = false;
+    let justLeftHive = true;
 
     const flyTo = (to: Point, onDone: () => void) => {
       const from = { ...posRef.current };
@@ -71,6 +71,7 @@ export function WanderingBee() {
       const wobbleAmp = 8 + Math.random() * 12;
       const wobbleFreq = 2.5 + Math.random() * 2;
       setFacingLeft(to.x < from.x);
+      setVisible(true);
 
       const tick = (now: number) => {
         if (cancelled) return;
@@ -95,20 +96,42 @@ export function WanderingBee() {
 
     const loop = () => {
       if (cancelled) return;
-      const target = pickTarget(posRef.current);
-      const atHive =
-        Math.hypot(target.x - hive().x, target.y - hive().y) < 20;
+      const hivePos = hive();
+      const allowHive = !justLeftHive;
+      justLeftHive = false;
+      const target = pickTarget(posRef.current, allowHive);
+      const landingAtHive =
+        Math.hypot(target.x - hivePos.x, target.y - hivePos.y) < 20;
+
       flyTo(target, () => {
-        const pause = atHive ? rand(900, 2200) : rand(200, 900);
-        timeoutRef.current = setTimeout(loop, pause);
+        if (landingAtHive) {
+          // Duck into the hive, then emerge later.
+          setVisible(false);
+          posRef.current = hivePos;
+          setPos(hivePos);
+          timeoutRef.current = setTimeout(() => {
+            if (cancelled) return;
+            justLeftHive = true;
+            setVisible(true);
+            loop();
+          }, rand(1800, 4200));
+          return;
+        }
+        timeoutRef.current = setTimeout(loop, rand(200, 900));
       });
     };
 
-    // start near hive
+    // Start already tucked in the hive, then emerge.
     const start = hive();
     posRef.current = start;
     setPos(start);
-    timeoutRef.current = setTimeout(loop, 600);
+    setVisible(false);
+    timeoutRef.current = setTimeout(() => {
+      if (cancelled) return;
+      justLeftHive = true;
+      setVisible(true);
+      loop();
+    }, rand(800, 1600));
 
     return () => {
       cancelled = true;
@@ -123,7 +146,7 @@ export function WanderingBee() {
         <PixelHive width={64} height={72} />
       </div>
 
-      {!reducedMotion && (
+      {!reducedMotion && visible && (
         <div
           className="absolute will-change-transform"
           style={{
