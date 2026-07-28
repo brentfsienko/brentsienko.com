@@ -137,6 +137,33 @@ a:hover {
   animation-iteration-count: infinite;
 }
 
+.bee-bubble {
+  max-width: min(240px, 70vw);
+  white-space: normal;
+  text-align: center;
+  padding: 6px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  background: #fffdf7;
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.3;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.bee-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%) rotate(45deg);
+  background: #fffdf7;
+  border-right: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+
 @keyframes ink-underline {
   from {
     transform: scaleX(0);

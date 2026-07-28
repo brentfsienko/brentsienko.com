@@ -8,8 +8,30 @@ type Point = { x: number; y: number };
 const BEE_W = 44;
 const BEE_H = 32;
 
+const QUIPS = [
+  "bzzzzz",
+  "where'd i leave my car keys?",
+  "this place is kinda cool, eh?",
+  "is this organic?",
+  "don't mind me",
+  "just vibing",
+  "ooo shiny",
+  "be right back",
+  "have you seen my hive?",
+  "smells like code in here",
+  "one more lap…",
+  "hello??",
+  "nice fonts",
+  "i'm not lost. you're lost.",
+  "pollen break",
+];
+
 function rand(min: number, max: number) {
   return min + Math.random() * (max - min);
+}
+
+function pickQuip() {
+  return QUIPS[Math.floor(Math.random() * QUIPS.length)] ?? "bzzzzz";
 }
 
 function easeInOut(t: number) {
@@ -20,6 +42,7 @@ export function WanderingBee() {
   const [pos, setPos] = useState<Point>({ x: 80, y: 80 });
   const [facingLeft, setFacingLeft] = useState(false);
   const [visible, setVisible] = useState(true);
+  const [quip, setQuip] = useState<string | null>(null);
   const [reducedMotion, setReducedMotion] = useState(false);
   const posRef = useRef(pos);
   const rafRef = useRef<number | null>(null);
@@ -47,7 +70,6 @@ export function WanderingBee() {
           y: r.top + r.height / 2 - BEE_H / 2,
         };
       }
-      // Fallback: entrance is ~mid-lower on the hive, not the top.
       const w = window.innerWidth;
       const sm = w >= 640;
       const right = sm ? 20 : 12;
@@ -62,6 +84,15 @@ export function WanderingBee() {
       };
     };
 
+    const centerSpot = (): Point => {
+      const jitterX = rand(-48, 48);
+      const jitterY = rand(-56, 56);
+      return {
+        x: window.innerWidth / 2 - BEE_W / 2 + jitterX,
+        y: window.innerHeight / 2 - BEE_H / 2 + jitterY,
+      };
+    };
+
     const randomSpot = (): Point => {
       const pad = 40;
       return {
@@ -70,8 +101,15 @@ export function WanderingBee() {
       };
     };
 
-    const pickTarget = (from: Point, allowHive: boolean): Point => {
-      if (allowHive && Math.random() < 0.28) return hive();
+    type TargetKind = "wander" | "hive" | "chat";
+
+    const pickTarget = (
+      from: Point,
+      allowHive: boolean,
+    ): { point: Point; kind: TargetKind } => {
+      const roll = Math.random();
+      if (roll < 0.22) return { point: centerSpot(), kind: "chat" };
+      if (allowHive && roll < 0.22 + 0.22) return { point: hive(), kind: "hive" };
       let next = randomSpot();
       let tries = 0;
       while (
@@ -81,7 +119,7 @@ export function WanderingBee() {
         next = randomSpot();
         tries += 1;
       }
-      return next;
+      return { point: next, kind: "wander" };
     };
 
     let cancelled = false;
@@ -96,6 +134,7 @@ export function WanderingBee() {
       const wobbleFreq = 2.5 + Math.random() * 2;
       setFacingLeft(to.x < from.x);
       setVisible(true);
+      setQuip(null);
 
       const tick = (now: number) => {
         if (cancelled) return;
@@ -120,17 +159,14 @@ export function WanderingBee() {
 
     const loop = () => {
       if (cancelled) return;
-      const hivePos = hive();
       const allowHive = !justLeftHive;
       justLeftHive = false;
-      const target = pickTarget(posRef.current, allowHive);
-      const landingAtHive =
-        Math.hypot(target.x - hivePos.x, target.y - hivePos.y) < 24;
+      const { point: target, kind } = pickTarget(posRef.current, allowHive);
 
       flyTo(target, () => {
-        if (landingAtHive) {
-          // Duck into the entrance hole, then emerge later.
+        if (kind === "hive") {
           setVisible(false);
+          setQuip(null);
           const dock = hive();
           posRef.current = dock;
           setPos(dock);
@@ -142,15 +178,26 @@ export function WanderingBee() {
           }, rand(1800, 4200));
           return;
         }
+
+        if (kind === "chat") {
+          setQuip(pickQuip());
+          timeoutRef.current = setTimeout(() => {
+            if (cancelled) return;
+            setQuip(null);
+            loop();
+          }, rand(3000, 5000));
+          return;
+        }
+
         timeoutRef.current = setTimeout(loop, rand(200, 900));
       });
     };
 
-    // Start already tucked in the hive, then emerge from the hole.
     const start = hive();
     posRef.current = start;
     setPos(start);
     setVisible(false);
+    setQuip(null);
     timeoutRef.current = setTimeout(() => {
       if (cancelled) return;
       justLeftHive = true;
@@ -170,7 +217,6 @@ export function WanderingBee() {
       <div className="absolute right-3 top-14 sm:right-5 sm:top-16">
         <div className="relative" style={{ width: 64, height: 72 }}>
           <PixelHive width={64} height={72} />
-          {/* Entrance hole marker — viewBox (12–16, 20–24) on 28×32 grid */}
           <span
             ref={entranceRef}
             className="absolute"
@@ -192,6 +238,14 @@ export function WanderingBee() {
             transform: `translate(${pos.x}px, ${pos.y}px)`,
           }}
         >
+          {quip ? (
+            <div
+              className="bee-bubble absolute left-1/2 bottom-full mb-2 -translate-x-1/2 whitespace-nowrap"
+              role="status"
+            >
+              {quip}
+            </div>
+          ) : null}
           <PixelBee
             width={BEE_W}
             height={BEE_H}
