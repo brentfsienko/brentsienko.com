@@ -4,9 +4,9 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <section className="home-scene relative min-h-[calc(100vh-7.5rem)] overflow-hidden">
-      {/* Treehouse spans nearly header rule → bottom rule; chair sits on the lawn by the pond. */}
+      {/* Treehouse ~2× prior size; chair on the lawn just left of the pond. */}
       <div
-        className="pointer-events-none absolute bottom-2 left-0 top-3 z-0 w-[min(52vw,380px)] sm:w-[min(46vw,420px)] lg:w-[440px]"
+        className="pointer-events-none absolute bottom-2 left-[-6%] z-0 aspect-square w-[min(100vw,760px)] sm:left-[-4%] sm:w-[min(92vw,840px)] lg:w-[880px]"
         aria-hidden
       >
         <Image
@@ -15,24 +15,24 @@ export default function HomePage() {
           fill
           priority
           className="object-contain object-left-bottom"
-          sizes="(max-width: 640px) 52vw, (max-width: 1024px) 46vw, 440px"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 92vw, 880px"
         />
-        {/* Pond sits on the lower-right of the lawn patch in the art. */}
+        {/* Pond is lower-right on the lawn — chair sits just beside it on the grass. */}
         <Image
           src="/art/pixel-chair.png"
           alt=""
           width={1024}
           height={1024}
-          className="pixel absolute w-[14%] max-w-[72px] sm:max-w-[88px]"
+          className="pixel absolute w-[11%] max-w-[96px] sm:max-w-[112px]"
           style={{
-            left: "58%",
-            bottom: "5.5%",
+            left: "46%",
+            bottom: "6%",
           }}
-          sizes="88px"
+          sizes="112px"
         />
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-7.5rem)] max-w-5xl flex-col justify-center px-4 py-16 pl-[min(54vw,22rem)] sm:px-6 sm:pl-[min(48vw,26rem)] lg:pl-[28rem]">
+      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-7.5rem)] max-w-5xl flex-col justify-center px-4 py-16 pl-[min(62vw,28rem)] sm:px-6 sm:pl-[min(56vw,34rem)] lg:pl-[36rem]">
         <h1 className="text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
           brent
           <br />
