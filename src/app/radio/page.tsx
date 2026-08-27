@@ -122,33 +122,33 @@ export default async function RadioPage() {
                   <p className="mb-3 text-xs font-bold uppercase tracking-widest text-ink-faint">
                     top tracks
                   </p>
-                  <ol className="space-y-3">
+                  <ol className="space-y-1">
                     {topTracks.map((track, i) => (
-                      <li key={track.id} className="flex items-center gap-3">
-                        <span className="w-4 shrink-0 text-right text-xs text-ink-faint">
-                          {i + 1}
-                        </span>
-                        {track.imageUrl && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={track.imageUrl}
-                            alt=""
-                            width={36}
-                            height={36}
-                            className="h-9 w-9 shrink-0 border border-ink object-cover"
-                          />
-                        )}
-                        <div className="min-w-0">
-                          <a
-                            href={track.spotifyUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block truncate text-sm font-bold leading-tight hover:underline"
-                          >
-                            {track.name}
-                          </a>
-                          <p className="truncate text-xs text-ink-soft">{track.artist}</p>
-                        </div>
+                      <li key={track.id}>
+                        <a
+                          href={track.spotifyUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group flex items-center gap-3 rounded-sm px-2 py-2 transition-colors duration-100 hover:bg-yellow-100"
+                        >
+                          <span className="w-4 shrink-0 text-right text-xs text-ink-faint group-hover:text-yellow-700">
+                            {i + 1}
+                          </span>
+                          {track.imageUrl && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={track.imageUrl}
+                              alt=""
+                              width={36}
+                              height={36}
+                              className="h-9 w-9 shrink-0 border border-ink object-cover"
+                            />
+                          )}
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-bold leading-tight">{track.name}</p>
+                            <p className="truncate text-xs text-ink-soft">{track.artist}</p>
+                          </div>
+                        </a>
                       </li>
                     ))}
                   </ol>
@@ -160,29 +160,29 @@ export default async function RadioPage() {
                   <p className="mb-3 text-xs font-bold uppercase tracking-widest text-ink-faint">
                     top artists
                   </p>
-                  <ol className="space-y-3">
+                  <ol className="space-y-1">
                     {topArtists.map((artist, i) => (
-                      <li key={artist.id} className="flex items-center gap-3">
-                        <span className="w-4 shrink-0 text-right text-xs text-ink-faint">
-                          {i + 1}
-                        </span>
-                        {artist.imageUrl && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={artist.imageUrl}
-                            alt=""
-                            width={36}
-                            height={36}
-                            className="h-9 w-9 shrink-0 border border-ink object-cover"
-                          />
-                        )}
+                      <li key={artist.id}>
                         <a
                           href={artist.spotifyUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="truncate text-sm font-bold leading-tight hover:underline"
+                          className="group flex items-center gap-3 rounded-sm px-2 py-2 transition-colors duration-100 hover:bg-yellow-100"
                         >
-                          {artist.name}
+                          <span className="w-4 shrink-0 text-right text-xs text-ink-faint group-hover:text-yellow-700">
+                            {i + 1}
+                          </span>
+                          {artist.imageUrl && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={artist.imageUrl}
+                              alt=""
+                              width={36}
+                              height={36}
+                              className="h-9 w-9 shrink-0 border border-ink object-cover"
+                            />
+                          )}
+                          <p className="truncate text-sm font-bold leading-tight">{artist.name}</p>
                         </a>
                       </li>
                     ))}
