@@ -17,17 +17,15 @@ export type RadioData = {
 export const radioData: RadioData = {
   monthLabel: "August 2026",
   song: {
-    title: "Please Please Please",
-    artist: "Sabrina Carpenter",
-    note: "Been on repeat. Not sorry.",
-    spotifyId: "5HCyWlXZPP0y6Gqq8TgA20",
-    spotifyUrl: "https://open.spotify.com/track/5HCyWlXZPP0y6Gqq8TgA20",
+    title: "the cops are coming",
+    artist: "Junior Mesa",
+    spotifyId: "1BlZIQiHakd1k4YmKsymZt",
+    spotifyUrl: "https://open.spotify.com/track/1BlZIQiHakd1k4YmKsymZt",
   },
   album: {
-    title: "Short n' Sweet",
-    artist: "Sabrina Carpenter",
-    note: "The whole thing front to back.",
-    spotifyId: "2IF0iFwMEAlpHiPXKGODzg",
-    spotifyUrl: "https://open.spotify.com/album/2IF0iFwMEAlpHiPXKGODzg",
+    title: "Rat Saw God",
+    artist: "Wednesday",
+    spotifyId: "1oTR3aC0jYmwUlr9duBi05",
+    spotifyUrl: "https://open.spotify.com/album/1oTR3aC0jYmwUlr9duBi05",
   },
 };
