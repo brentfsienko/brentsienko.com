@@ -22,22 +22,6 @@ function LiveBadge({ live }: { live: boolean }) {
   );
 }
 
-function SpotifyEmbed({ kind, id }: { kind: "track" | "playlist"; id: string }) {
-  const src = `https://open.spotify.com/embed/${kind}/${id}?utm_source=generator&theme=0`;
-  const height = kind === "track" ? 152 : 352;
-  return (
-    <iframe
-      key={id}
-      src={src}
-      width="100%"
-      height={height}
-      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-      loading="lazy"
-      style={{ border: "none", display: "block" }}
-      title={kind === "track" ? "Now playing" : "Daylist"}
-    />
-  );
-}
 
 export function NowPlaying() {
   const [data, setData] = useState<NowPlayingData | null>(null);
@@ -109,9 +93,6 @@ export function NowPlaying() {
         </div>
       </div>
 
-      <div className="overflow-hidden border-2 border-ink" style={{ background: "#121212" }}>
-        <SpotifyEmbed kind={nowData.kind} id={nowData.id} />
-      </div>
     </div>
   );
 }
