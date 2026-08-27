@@ -7,7 +7,7 @@ import { PixelHive } from "@/components/PixelArt";
 const links = [
   { href: "/work", label: "work" },
   { href: "/blog", label: "blog" },
-  { href: "/radio", label: "radio" },
+  { href: "/radio", label: "moosic" },
   { href: "/about", label: "about" },
 ];
 
@@ -65,15 +65,12 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-30 border-t-2 border-ink bg-paper">
-      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
-        <blockquote className="max-w-2xl text-xs leading-relaxed text-ink-soft sm:text-sm">
-          <p>
-            “This is not our world with trees in it. It&apos;s a world of trees,
-            where humans have just arrived.”
+      <div className="mx-auto max-w-5xl px-4 py-2 sm:px-6">
+        <blockquote className="max-w-2xl text-xs text-ink-soft">
+          <p className="leading-snug">
+            “This is not our world with trees in it. It&apos;s a world of trees, where humans have just arrived.”
+            {" "}<span className="text-ink-faint">― Richard Powers, <cite className="not-italic">The Overstory</cite></span>
           </p>
-          <footer className="mt-2 text-ink-faint">
-            ― Richard Powers, <cite className="not-italic">The Overstory</cite>
-          </footer>
         </blockquote>
       </div>
     </footer>

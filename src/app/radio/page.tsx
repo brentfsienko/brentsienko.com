@@ -70,9 +70,9 @@ export default async function RadioPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <div className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">radio</h1>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">mooooooooosic</h1>
         <p className="mt-3 max-w-xl text-sm text-ink-soft">
-          Moooooosic. What I&apos;m currently listening to + monthly and current favs.
+          What I&apos;m currently listening to + monthly and current favs.
         </p>
       </div>
 
