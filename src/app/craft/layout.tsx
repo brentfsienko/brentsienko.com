@@ -27,8 +27,8 @@ export default function CraftLayout({ children }: { children: React.ReactNode })
                     href={tab.href}
                     className={`block rounded-sm px-3 py-1.5 text-sm transition-colors duration-100 ${
                       active
-                        ? "bg-[#ffe87c] font-bold text-ink"
-                        : "text-ink-soft hover:bg-[#ffe87c]/40 hover:text-ink"
+                        ? "bg-[#e8a317] font-bold text-ink"
+                        : "text-ink-soft hover:bg-[#e8a317]/40 hover:text-ink"
                     }`}
                   >
                     {tab.label}
@@ -50,8 +50,8 @@ export default function CraftLayout({ children }: { children: React.ReactNode })
                     href={tab.href}
                     className={`block rounded-sm px-3 py-1.5 text-sm transition-colors duration-100 ${
                       active
-                        ? "bg-[#ffe87c] font-bold text-ink"
-                        : "text-ink-soft hover:bg-[#ffe87c]/40 hover:text-ink"
+                        ? "bg-[#e8a317] font-bold text-ink"
+                        : "text-ink-soft hover:bg-[#e8a317]/40 hover:text-ink"
                     }`}
                   >
                     {tab.label}

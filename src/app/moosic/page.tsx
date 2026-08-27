@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export const revalidate = 10800;
 
-const HOVER = "hover:bg-[#ffe87c]";
+const HOVER = "hover:bg-[#e8a317]";
 const HOVER_NUM = "group-hover:text-yellow-700";
 
 function MonthlyPickRow({

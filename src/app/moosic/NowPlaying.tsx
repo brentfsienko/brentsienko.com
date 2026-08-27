@@ -72,7 +72,7 @@ export function NowPlaying() {
       href={spotifyUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-start gap-4 rounded-sm px-2 py-2 transition-colors duration-100 hover:bg-[#ffe87c]"
+      className="group flex items-start gap-4 rounded-sm px-2 py-2 transition-colors duration-100 hover:bg-[#e8a317]"
     >
       {nowData.albumArt && (
         // eslint-disable-next-line @next/next/no-img-element
