@@ -37,13 +37,8 @@ function MonthlyPickRow({
     >
       {imageUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={imageUrl}
-          alt=""
-          width={72}
-          height={72}
-          className="h-[72px] w-[72px] shrink-0 border-2 border-ink object-cover"
-        />
+        <img src={imageUrl} alt="" width={72} height={72}
+          className="h-[72px] w-[72px] shrink-0 border-2 border-ink object-cover" />
       ) : (
         <div className="h-[72px] w-[72px] shrink-0 border-2 border-ink bg-paper" />
       )}
@@ -87,119 +82,106 @@ export default async function RadioPage() {
         <NowPlaying />
       </section>
 
-      {/* Listening to lately + This month — side by side at top level on wide screens */}
-      <div className="grid gap-8 sm:grid-cols-2">
-        {/* Listening to lately */}
-        {hasTopData && (
-          <section>
-            <h2 className="mb-3 text-xs uppercase tracking-widest text-ink-faint">listening to lately</h2>
-            <div className="space-y-4">
-              {topTracks.length > 0 && (
-                <div>
-                  <p className="mb-1.5 px-2 text-xs font-bold uppercase tracking-widest text-ink-faint">
-                    top tracks
-                  </p>
-                  <ol className="space-y-0.5">
-                    {topTracks.map((track, i) => (
-                      <li key={track.id}>
-                        <a
-                          href={track.spotifyUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`group flex items-center gap-3 rounded-sm px-2 py-1.5 transition-colors duration-100 ${HOVER}`}
-                        >
-                          <span className={`w-4 shrink-0 text-right text-xs text-ink-faint ${HOVER_NUM}`}>
-                            {i + 1}
-                          </span>
-                          {track.imageUrl && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={track.imageUrl}
-                              alt=""
-                              width={54}
-                              height={54}
-                              className="h-[54px] w-[54px] shrink-0 border border-ink object-cover"
-                            />
-                          )}
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-bold leading-tight">{track.name}</p>
-                            <p className="truncate text-xs text-ink-soft">{track.artist}</p>
-                          </div>
-                        </a>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              )}
+      {/* Listening to lately — artists LEFT | tracks RIGHT */}
+      {hasTopData && (
+        <section className="mb-10">
+          <h2 className="mb-4 text-xs uppercase tracking-widest text-ink-faint">listening to lately</h2>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {topArtists.length > 0 && (
+              <div>
+                <p className="mb-1.5 px-2 text-xs font-bold uppercase tracking-widest text-ink-faint">
+                  top artists
+                </p>
+                <ol className="space-y-0.5">
+                  {topArtists.map((artist, i) => (
+                    <li key={artist.id}>
+                      <a
+                        href={artist.spotifyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`group flex items-center gap-3 rounded-sm px-2 py-1.5 transition-colors duration-100 ${HOVER}`}
+                      >
+                        <span className={`w-4 shrink-0 text-right text-xs text-ink-faint ${HOVER_NUM}`}>
+                          {i + 1}
+                        </span>
+                        {artist.imageUrl && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={artist.imageUrl} alt="" width={54} height={54}
+                            className="h-[54px] w-[54px] shrink-0 border border-ink object-cover" />
+                        )}
+                        <p className="truncate text-sm font-bold leading-tight">{artist.name}</p>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
 
-              {topArtists.length > 0 && (
-                <div>
-                  <p className="mb-1.5 px-2 text-xs font-bold uppercase tracking-widest text-ink-faint">
-                    top artists
-                  </p>
-                  <ol className="space-y-0.5">
-                    {topArtists.map((artist, i) => (
-                      <li key={artist.id}>
-                        <a
-                          href={artist.spotifyUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className={`group flex items-center gap-3 rounded-sm px-2 py-1.5 transition-colors duration-100 ${HOVER}`}
-                        >
-                          <span className={`w-4 shrink-0 text-right text-xs text-ink-faint ${HOVER_NUM}`}>
-                            {i + 1}
-                          </span>
-                          {artist.imageUrl && (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={artist.imageUrl}
-                              alt=""
-                              width={54}
-                              height={54}
-                              className="h-[54px] w-[54px] shrink-0 border border-ink object-cover"
-                            />
-                          )}
-                          <p className="truncate text-sm font-bold leading-tight">{artist.name}</p>
-                        </a>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* This month's picks */}
-        <section>
-          <div className="mb-3 flex items-baseline gap-2">
-            <h2 className="text-xs uppercase tracking-widest text-ink-faint">this month</h2>
-            <span className="text-xs text-ink-faint">{current.monthLabel}</span>
-          </div>
-          <div className="space-y-0.5">
-            <MonthlyPickRow
-              label="favorite song"
-              title={current.song.title}
-              artist={current.song.artist}
-              note={current.song.note}
-              spotifyUrl={current.song.spotifyUrl}
-              imageUrl={songImage}
-            />
-            <MonthlyPickRow
-              label="favorite album"
-              title={current.album.title}
-              artist={current.album.artist}
-              note={current.album.note}
-              spotifyUrl={current.album.spotifyUrl}
-              imageUrl={albumImage}
-            />
+            {topTracks.length > 0 && (
+              <div>
+                <p className="mb-1.5 px-2 text-xs font-bold uppercase tracking-widest text-ink-faint">
+                  top tracks
+                </p>
+                <ol className="space-y-0.5">
+                  {topTracks.map((track, i) => (
+                    <li key={track.id}>
+                      <a
+                        href={track.spotifyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`group flex items-center gap-3 rounded-sm px-2 py-1.5 transition-colors duration-100 ${HOVER}`}
+                      >
+                        <span className={`w-4 shrink-0 text-right text-xs text-ink-faint ${HOVER_NUM}`}>
+                          {i + 1}
+                        </span>
+                        {track.imageUrl && (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={track.imageUrl} alt="" width={54} height={54}
+                            className="h-[54px] w-[54px] shrink-0 border border-ink object-cover" />
+                        )}
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-bold leading-tight">{track.name}</p>
+                          <p className="truncate text-xs text-ink-soft">{track.artist}</p>
+                        </div>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
           </div>
         </section>
-      </div>
+      )}
+
+      {/* This month — song LEFT | album RIGHT */}
+      <section className="mb-14">
+        <div className="mb-3 flex items-baseline gap-2">
+          <h2 className="text-xs uppercase tracking-widest text-ink-faint">this month</h2>
+          <span className="text-xs text-ink-faint">{current.monthLabel}</span>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <MonthlyPickRow
+            label="favorite song"
+            title={current.song.title}
+            artist={current.song.artist}
+            note={current.song.note}
+            spotifyUrl={current.song.spotifyUrl}
+            imageUrl={songImage}
+          />
+          <MonthlyPickRow
+            label="favorite album"
+            title={current.album.title}
+            artist={current.album.artist}
+            note={current.album.note}
+            spotifyUrl={current.album.spotifyUrl}
+            imageUrl={albumImage}
+          />
+        </div>
+      </section>
 
       {/* Archive */}
       {archive.length > 0 && (
-        <section className="mt-12">
+        <section>
           <h2 className="mb-4 text-xs uppercase tracking-widest text-ink-faint">archive</h2>
           <ul className="divide-y divide-ink border-y border-ink">
             {archive.map((month) => (
