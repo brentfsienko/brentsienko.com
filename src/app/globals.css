@@ -326,9 +326,15 @@ a:hover {
   animation: radio-pulse 1s steps(2) infinite;
 }
 
-@keyframes radio-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+@keyframes quote-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.quote-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: quote-marquee 32s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -336,7 +342,8 @@ a:hover {
   .leaf-flicker,
   .bee-fly,
   .nav-link::after,
-  .radio-live-dot {
+  .radio-live-dot,
+  .quote-marquee-track {
     animation: none !important;
     transition: none !important;
   }
