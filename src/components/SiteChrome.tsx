@@ -64,7 +64,7 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-30 border-t-2 border-ink bg-paper">
+    <footer className="fixed bottom-0 left-0 right-0 z-30 bg-paper">
       <div className="mx-auto max-w-5xl px-4 py-2 sm:px-6">
         <blockquote className="max-w-2xl text-xs text-ink-soft">
           <p className="leading-snug">
