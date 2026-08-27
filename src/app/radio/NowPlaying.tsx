@@ -33,7 +33,7 @@ function SpotifyEmbed({ kind, id }: { kind: "track" | "playlist"; id: string }) 
       height={height}
       allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
       loading="lazy"
-      style={{ border: "none" }}
+      style={{ border: "none", display: "block" }}
       title={kind === "track" ? "Now playing" : "Daylist"}
     />
   );
@@ -75,12 +75,7 @@ export function NowPlaying() {
   if ("configured" in data && !data.configured) {
     return (
       <div className="border-2 border-dashed border-ink-faint p-6">
-        <p className="text-sm text-ink-soft">
-          Station is offline — Spotify isn&apos;t connected yet.{" "}
-          <a href="/radio/connect" className="underline">
-            connect spotify →
-          </a>
-        </p>
+        <p className="text-sm text-ink-soft">station is offline right now — check back soon.</p>
       </div>
     );
   }
@@ -114,7 +109,7 @@ export function NowPlaying() {
         </div>
       </div>
 
-      <div className="border-2 border-ink">
+      <div className="overflow-hidden border-2 border-ink">
         <SpotifyEmbed kind={nowData.kind} id={nowData.id} />
       </div>
     </div>

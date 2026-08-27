@@ -30,14 +30,14 @@ function MonthlyPick({
       <p className="font-bold leading-tight">{title}</p>
       <p className="mt-0.5 text-sm text-ink-soft">{artist}</p>
       {note && <p className="mt-2 text-xs text-ink-faint">{note}</p>}
-      <div className="mt-4 border-2 border-ink">
+      <div className="mt-4 overflow-hidden border-2 border-ink">
         <iframe
           src={`https://open.spotify.com/embed/${kind}/${spotifyId}?utm_source=generator&theme=0`}
           width="100%"
           height={152}
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
           loading="lazy"
-          style={{ border: "none" }}
+          style={{ border: "none", display: "block" }}
           title={`${label}: ${title}`}
         />
       </div>
