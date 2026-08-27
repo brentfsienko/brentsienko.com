@@ -38,7 +38,7 @@ export default function RootLayout({
       <body className="paper-grain flex min-h-full flex-col font-mono text-ink antialiased">
         <SiteHeader />
         <WanderingBee />
-        <main className="relative z-10 flex-1">{children}</main>
+        <main className="relative z-10 flex-1 pb-24">{children}</main>
         <SiteFooter />
         <Analytics />
       </body>
