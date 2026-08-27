@@ -12,7 +12,7 @@ export type Project = {
 export const projects: Project[] = [
   {
     slug: "sudoku",
-    name: "Sudoku",
+    name: "Sudogku",
     tagline: "Co-op and competitive Sudoku with real-time rooms.",
     description:
       "A dog-themed Sudoku game built with Next.js. Play solo across five difficulties, or join a friend over Wi-Fi in co-op or competitive mode. Real-time presence and shared boards run on Liveblocks; optional Supabase auth syncs stats across devices.",
