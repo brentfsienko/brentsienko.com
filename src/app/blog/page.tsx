@@ -34,9 +34,9 @@ export default async function BlogIndexPage() {
 
       <ul className="divide-y-2 divide-ink border-y-2 border-ink">
         {posts.map((post) => (
-          <li key={post.id} className="py-6">
-            <Link href={`/blog/${post.slug}`} className="block no-underline">
-              <h2 className="text-xl font-bold hover:underline">{post.title}</h2>
+          <li key={post.id} className="py-2">
+            <Link href={`/blog/${post.slug}`} className="group block rounded-sm px-2 py-4 no-underline transition-colors duration-100 hover:bg-[#e8a317]">
+              <h2 className="text-xl font-bold">{post.title}</h2>
               {post.summary && (
                 <p className="mt-2 text-sm text-ink-soft">{post.summary}</p>
               )}
