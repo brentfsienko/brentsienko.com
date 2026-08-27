@@ -134,6 +134,71 @@ export async function getNowPlaying(): Promise<NowPlayingResult | null> {
   }
 }
 
+export type TopTrack = {
+  id: string;
+  name: string;
+  artist: string;
+  imageUrl: string | null;
+  spotifyUrl: string;
+};
+
+export type TopArtist = {
+  id: string;
+  name: string;
+  imageUrl: string | null;
+  spotifyUrl: string;
+};
+
+export async function getTopTracks(limit = 3): Promise<TopTrack[]> {
+  if (!isSpotifyConfigured()) return [];
+  try {
+    const res = await spotifyFetch(`/me/top/tracks?time_range=short_term&limit=${limit}`);
+    if (!res.ok) return [];
+    const data = await res.json() as {
+      items: {
+        id: string;
+        name: string;
+        artists: { name: string }[];
+        album: { images: { url: string }[] };
+        external_urls: { spotify: string };
+      }[];
+    };
+    return data.items.map((t) => ({
+      id: t.id,
+      name: t.name,
+      artist: t.artists.map((a) => a.name).join(", "),
+      imageUrl: t.album.images[0]?.url ?? null,
+      spotifyUrl: t.external_urls.spotify,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+export async function getTopArtists(limit = 3): Promise<TopArtist[]> {
+  if (!isSpotifyConfigured()) return [];
+  try {
+    const res = await spotifyFetch(`/me/top/artists?time_range=short_term&limit=${limit}`);
+    if (!res.ok) return [];
+    const data = await res.json() as {
+      items: {
+        id: string;
+        name: string;
+        images: { url: string }[];
+        external_urls: { spotify: string };
+      }[];
+    };
+    return data.items.map((a) => ({
+      id: a.id,
+      name: a.name,
+      imageUrl: a.images[0]?.url ?? null,
+      spotifyUrl: a.external_urls.spotify,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export function buildSpotifyAuthUrl() {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const redirectUri = process.env.SPOTIFY_REDIRECT_URI;
@@ -143,6 +208,7 @@ export function buildSpotifyAuthUrl() {
     "user-read-currently-playing",
     "user-read-playback-state",
     "playlist-read-private",
+    "user-top-read",
   ].join(" ");
 
   const params = new URLSearchParams({
