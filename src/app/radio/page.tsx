@@ -30,7 +30,7 @@ function MonthlyPick({
       <p className="font-bold leading-tight">{title}</p>
       <p className="mt-0.5 text-sm text-ink-soft">{artist}</p>
       {note && <p className="mt-2 text-xs text-ink-faint">{note}</p>}
-      <div className="mt-4 overflow-hidden border-2 border-ink">
+      <div className="mt-4 overflow-hidden border-2 border-ink" style={{ background: "#121212" }}>
         <iframe
           src={`https://open.spotify.com/embed/${kind}/${spotifyId}?utm_source=generator&theme=0`}
           width="100%"
@@ -61,8 +61,7 @@ export default function RadioPage() {
       <div className="mb-10">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">radio</h1>
         <p className="mt-3 max-w-xl text-sm text-ink-soft">
-          Live from my Spotify. If I&apos;m playing something, you&apos;re hearing it. If not,
-          enjoy today&apos;s daylist.
+          Moooooosic. What I&apos;m currently listening to + monthly and current favs.
         </p>
       </div>
 

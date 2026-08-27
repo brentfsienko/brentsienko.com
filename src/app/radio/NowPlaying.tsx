@@ -109,7 +109,7 @@ export function NowPlaying() {
         </div>
       </div>
 
-      <div className="overflow-hidden border-2 border-ink">
+      <div className="overflow-hidden border-2 border-ink" style={{ background: "#121212" }}>
         <SpotifyEmbed kind={nowData.kind} id={nowData.id} />
       </div>
     </div>
