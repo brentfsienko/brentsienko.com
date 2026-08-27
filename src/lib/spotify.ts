@@ -134,6 +134,26 @@ export async function getNowPlaying(): Promise<NowPlayingResult | null> {
   }
 }
 
+export async function getTrackImage(id: string): Promise<string | null> {
+  if (!isSpotifyConfigured()) return null;
+  try {
+    const res = await spotifyFetch(`/tracks/${id}`);
+    if (!res.ok) return null;
+    const data = await res.json() as { album: { images: { url: string }[] } };
+    return data.album.images[0]?.url ?? null;
+  } catch { return null; }
+}
+
+export async function getAlbumImage(id: string): Promise<string | null> {
+  if (!isSpotifyConfigured()) return null;
+  try {
+    const res = await spotifyFetch(`/albums/${id}`);
+    if (!res.ok) return null;
+    const data = await res.json() as { images: { url: string }[] };
+    return data.images[0]?.url ?? null;
+  } catch { return null; }
+}
+
 export type TopTrack = {
   id: string;
   name: string;

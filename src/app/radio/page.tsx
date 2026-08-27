@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { radioHistory } from "@/data/radio";
-import { getTopTracks, getTopArtists } from "@/lib/spotify";
+import { getTopTracks, getTopArtists, getTrackImage, getAlbumImage } from "@/lib/spotify";
 import { NowPlaying } from "./NowPlaying";
 
 export const metadata: Metadata = {
@@ -9,6 +9,9 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 10800;
+
+const HOVER = "hover:bg-[#ffe87c]";
+const HOVER_NUM = "group-hover:text-yellow-700";
 
 function MonthlyPickRow({
   label,
@@ -23,14 +26,14 @@ function MonthlyPickRow({
   artist: string;
   note?: string;
   spotifyUrl: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
 }) {
   return (
     <a
       href={spotifyUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-4 rounded-sm px-2 py-2 transition-colors duration-100 hover:bg-yellow-100"
+      className={`group flex items-center gap-4 rounded-sm px-2 py-2 transition-colors duration-100 ${HOVER}`}
     >
       {imageUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
@@ -45,7 +48,7 @@ function MonthlyPickRow({
         <div className="h-12 w-12 shrink-0 border-2 border-ink bg-paper" />
       )}
       <div className="min-w-0">
-        <p className="mb-0.5 text-[10px] uppercase tracking-widest text-ink-faint group-hover:text-yellow-700">
+        <p className={`mb-0.5 text-[10px] uppercase tracking-widest text-ink-faint ${HOVER_NUM}`}>
           {label}
         </p>
         <p className="truncate font-bold leading-tight">{title}</p>
@@ -60,9 +63,11 @@ export default async function RadioPage() {
   const current = radioHistory[0]!;
   const archive = radioHistory.slice(1);
 
-  const [topTracks, topArtists] = await Promise.all([
+  const [topTracks, topArtists, songImage, albumImage] = await Promise.all([
     getTopTracks(3),
     getTopArtists(3),
+    getTrackImage(current.song.spotifyId),
+    getAlbumImage(current.album.spotifyId),
   ]);
 
   const hasTopData = topTracks.length > 0 || topArtists.length > 0;
@@ -99,9 +104,9 @@ export default async function RadioPage() {
                         href={track.spotifyUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-center gap-3 rounded-sm px-2 py-2 transition-colors duration-100 hover:bg-yellow-100"
+                        className={`group flex items-center gap-3 rounded-sm px-2 py-2 transition-colors duration-100 ${HOVER}`}
                       >
-                        <span className="w-4 shrink-0 text-right text-xs text-ink-faint group-hover:text-yellow-700">
+                        <span className={`w-4 shrink-0 text-right text-xs text-ink-faint ${HOVER_NUM}`}>
                           {i + 1}
                         </span>
                         {track.imageUrl && (
@@ -137,9 +142,9 @@ export default async function RadioPage() {
                         href={artist.spotifyUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group flex items-center gap-3 rounded-sm px-2 py-2 transition-colors duration-100 hover:bg-yellow-100"
+                        className={`group flex items-center gap-3 rounded-sm px-2 py-2 transition-colors duration-100 ${HOVER}`}
                       >
-                        <span className="w-4 shrink-0 text-right text-xs text-ink-faint group-hover:text-yellow-700">
+                        <span className={`w-4 shrink-0 text-right text-xs text-ink-faint ${HOVER_NUM}`}>
                           {i + 1}
                         </span>
                         {artist.imageUrl && (
@@ -169,13 +174,14 @@ export default async function RadioPage() {
           <h2 className="text-xs uppercase tracking-widest text-ink-faint">this month</h2>
           <span className="text-xs text-ink-faint">{current.monthLabel}</span>
         </div>
-        <div className="space-y-1">
+        <div className="grid gap-1 sm:grid-cols-2">
           <MonthlyPickRow
             label="favorite song"
             title={current.song.title}
             artist={current.song.artist}
             note={current.song.note}
             spotifyUrl={current.song.spotifyUrl}
+            imageUrl={songImage}
           />
           <MonthlyPickRow
             label="favorite album"
@@ -183,6 +189,7 @@ export default async function RadioPage() {
             artist={current.album.artist}
             note={current.album.note}
             spotifyUrl={current.album.spotifyUrl}
+            imageUrl={albumImage}
           />
         </div>
       </section>
@@ -197,7 +204,7 @@ export default async function RadioPage() {
                 <p className="mb-3 text-xs uppercase tracking-widest text-ink-faint">
                   {month.monthLabel}
                 </p>
-                <div className="space-y-1">
+                <div className="grid gap-1 sm:grid-cols-2">
                   <MonthlyPickRow
                     label="favorite song"
                     title={month.song.title}
