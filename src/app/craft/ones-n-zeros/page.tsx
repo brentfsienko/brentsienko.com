@@ -9,44 +9,16 @@ export const metadata: Metadata = {
 
 export default function OnesNZerosPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16">
+    <div>
       <div className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">craft</h1>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">ones n zeros</h1>
         <p className="mt-3 max-w-xl text-ink-soft">
           Some things I&apos;ve been building — plus everything else on{" "}
-          <a
-            href="https://github.com/brentfsienko"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="https://github.com/brentfsienko" target="_blank" rel="noopener noreferrer">
             github.com/brentfsienko
           </a>
           .
         </p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <a href="/BrentSienkoResume.pdf" className="btn btn-solid" download>
-            download resume
-          </a>
-          <a
-            href="https://github.com/brentfsienko"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn"
-          >
-            github
-          </a>
-          <a
-            href="https://linkedin.com/in/brent-sienko"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn"
-          >
-            linkedin
-          </a>
-          <a href="mailto:brent5@berkeley.edu" className="btn">
-            email
-          </a>
-        </div>
       </div>
 
       <ul className="divide-y-2 divide-ink border-y-2 border-ink">
@@ -64,13 +36,9 @@ export default function OnesNZerosPage() {
                 className="pixel h-[72px] w-[72px] shrink-0 rounded-lg border-2 border-ink object-cover"
               />
               <div className="min-w-0">
-                <h2 className="text-2xl font-bold group-hover:underline">
-                  {project.name}
-                </h2>
+                <h2 className="text-2xl font-bold group-hover:underline">{project.name}</h2>
                 <p className="mt-2 max-w-2xl text-ink-soft">{project.tagline}</p>
-                <p className="mt-3 text-xs uppercase tracking-widest text-ink-faint">
-                  open →
-                </p>
+                <p className="mt-3 text-xs uppercase tracking-widest text-ink-faint">open →</p>
               </div>
             </Link>
           </li>
