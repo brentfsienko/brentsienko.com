@@ -7,6 +7,7 @@ import { PixelHive } from "@/components/PixelArt";
 const links = [
   { href: "/work", label: "work" },
   { href: "/blog", label: "blog" },
+  { href: "/radio", label: "radio" },
   { href: "/about", label: "about" },
 ];
 
@@ -34,13 +35,6 @@ export function SiteHeader() {
               </Link>
             );
           })}
-          <a
-            href="/BrentSienkoResume.pdf"
-            className="btn btn-solid !px-3 !py-1.5 !text-xs !shadow-[2px_2px_0_var(--ink)]"
-            download
-          >
-            resume
-          </a>
         </nav>
       </div>
 
@@ -71,18 +65,16 @@ export function SiteHeader() {
 export function SiteFooter() {
   return (
     <footer className="relative z-10 mt-auto border-t-2 border-ink">
-      <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-6 text-xs text-ink-soft sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <p>trees · bees · a good chair</p>
-        <div className="flex gap-4">
-          <a
-            href="https://github.com/brentfsienko"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            github.com/brentfsienko
-          </a>
-          <a href="mailto:brent5@berkeley.edu">email</a>
-        </div>
+      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
+        <blockquote className="max-w-2xl text-xs leading-relaxed text-ink-soft sm:text-sm">
+          <p>
+            “This is not our world with trees in it. It&apos;s a world of trees,
+            where humans have just arrived.”
+          </p>
+          <footer className="mt-2 text-ink-faint">
+            ― Richard Powers, <cite className="not-italic">The Overstory</cite>
+          </footer>
+        </blockquote>
       </div>
     </footer>
   );

@@ -10,39 +10,10 @@ export default function AboutPage() {
       <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">about</h1>
       <div className="mt-6 max-w-2xl space-y-4 leading-relaxed text-ink-soft">
         <p>
-          Hi, I&apos;m Brent. Friend of trees and bees and a good chair. I have
-          been bopping around quite a bit lately. Sometimes in the mountains.
-          Sometimes in the garden. Sometimes walking laps inside Grocery Outlet.
+          Hi, I&apos;m Brent. Friend of bees and trees and very recently, the
+          most trustworthy chair. Here&apos;s a little slice of my life! I hope
+          you find it as tasty as I have.
         </p>
-        <p>
-          These are some things I&apos;ve been working on over the years, I hope
-          you enjoy :)
-        </p>
-      </div>
-
-      <div className="mt-10 flex flex-wrap gap-3">
-        <a href="/BrentSienkoResume.pdf" className="btn btn-solid" download>
-          download resume
-        </a>
-        <a
-          href="https://github.com/brentfsienko"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn"
-        >
-          github
-        </a>
-        <a
-          href="https://linkedin.com/in/brent-sienko"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn"
-        >
-          linkedin
-        </a>
-        <a href="mailto:brent5@berkeley.edu" className="btn">
-          email
-        </a>
       </div>
     </div>
   );

@@ -316,11 +316,27 @@ a:hover {
   color: inherit;
 }
 
+/* ── Radio live indicator ── */
+.radio-live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 0;
+  background: var(--paper);
+  animation: radio-pulse 1s steps(2) infinite;
+}
+
+@keyframes radio-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .paper-grain::before,
   .leaf-flicker,
   .bee-fly,
-  .nav-link::after {
+  .nav-link::after,
+  .radio-live-dot {
     animation: none !important;
     transition: none !important;
   }

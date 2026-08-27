@@ -23,6 +23,30 @@ export default function WorkPage() {
           </a>
           .
         </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a href="/BrentSienkoResume.pdf" className="btn btn-solid" download>
+            download resume
+          </a>
+          <a
+            href="https://github.com/brentfsienko"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn"
+          >
+            github
+          </a>
+          <a
+            href="https://linkedin.com/in/brent-sienko"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn"
+          >
+            linkedin
+          </a>
+          <a href="mailto:brent5@berkeley.edu" className="btn">
+            email
+          </a>
+        </div>
       </div>
 
       <ul className="divide-y-2 divide-ink border-y-2 border-ink">
