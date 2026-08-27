@@ -65,34 +65,37 @@ export function NowPlaying() {
   }
 
   const nowData = data as Exclude<NowPlayingData, { configured: false }>;
+  const spotifyUrl = `https://open.spotify.com/${nowData.kind}/${nowData.id}`;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-start gap-4">
-        {nowData.albumArt && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={nowData.albumArt}
-            alt="album art"
-            width={72}
-            height={72}
-            className="h-[72px] w-[72px] shrink-0 border-2 border-ink object-cover"
-          />
+    <a
+      href={spotifyUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-start gap-4 rounded-sm px-2 py-2 transition-colors duration-100 hover:bg-[#ffe87c]"
+    >
+      {nowData.albumArt && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={nowData.albumArt}
+          alt="album art"
+          width={72}
+          height={72}
+          className="h-[72px] w-[72px] shrink-0 border-2 border-ink object-cover"
+        />
+      )}
+      <div className="min-w-0">
+        <LiveBadge live={nowData.live} />
+        <p className="mt-2 truncate font-bold">{nowData.title}</p>
+        {nowData.artist && (
+          <p className="truncate text-sm text-ink-soft">{nowData.artist}</p>
         )}
-        <div className="min-w-0">
-          <LiveBadge live={nowData.live} />
-          <p className="mt-2 truncate font-bold">{nowData.title}</p>
-          {nowData.artist && (
-            <p className="truncate text-sm text-ink-soft">{nowData.artist}</p>
-          )}
-          {!nowData.live && (
-            <p className="mt-1 text-xs text-ink-faint">
-              nothing on the decks — here&apos;s today&apos;s daylist
-            </p>
-          )}
-        </div>
+        {!nowData.live && (
+          <p className="mt-1 text-xs text-ink-faint">
+            nothing on the decks — here&apos;s today&apos;s daylist
+          </p>
+        )}
       </div>
-
-    </div>
+    </a>
   );
 }
