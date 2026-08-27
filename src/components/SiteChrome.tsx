@@ -7,7 +7,7 @@ import { PixelHive } from "@/components/PixelArt";
 const links = [
   { href: "/craft", label: "craft" },
   { href: "/blog", label: "blog" },
-  { href: "/radio", label: "moosic" },
+  { href: "/moosic", label: "moosic" },
   { href: "/about", label: "about" },
 ];
 
