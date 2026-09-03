@@ -85,6 +85,7 @@ export type GeckoSide = "top" | "right" | "bottom" | "left";
 
 let geckoPose = { x: 80, y: 56, side: "top" as GeckoSide };
 let chatLock = false;
+let duetCooldownUntil = 0;
 
 export function setGeckoPose(pose: { x: number; y: number; side: GeckoSide }) {
   geckoPose = pose;
@@ -113,7 +114,7 @@ export function pickGeckoQuip() {
 }
 
 export function tryStartDuet() {
-  if (chatLock) return false;
+  if (chatLock || Date.now() < duetCooldownUntil) return false;
   const duet = DUETS[Math.floor(Math.random() * DUETS.length)];
   if (!duet) return false;
   chatLock = true;
@@ -122,6 +123,7 @@ export function tryStartDuet() {
     emit(duet[1]);
     window.setTimeout(() => {
       chatLock = false;
+      duetCooldownUntil = Date.now() + 50_000 + Math.random() * 40_000;
     }, 3600);
   }, 2300);
   return true;

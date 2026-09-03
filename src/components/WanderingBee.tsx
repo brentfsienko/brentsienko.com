@@ -167,10 +167,10 @@ export function WanderingBee() {
       allowHive: boolean,
     ): { point: Point; kind: TargetKind } => {
       const roll = Math.random();
-      if (legsSinceChat >= 3 && roll < 0.1) {
+      if (legsSinceChat >= 10 && roll < 0.03) {
         return { point: geckoMeet(), kind: "duet" };
       }
-      if (legsSinceChat >= 3 && roll < 0.18) {
+      if (legsSinceChat >= 8 && roll < 0.08) {
         return { point: centerSpot(), kind: "chat" };
       }
       if (allowHive && roll < 0.28) return { point: hive(), kind: "hive" };

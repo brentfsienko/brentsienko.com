@@ -223,16 +223,16 @@ export function LineGecko() {
       }
 
       const roll = Math.random();
-      if (roll < 0.18) {
+      if (roll < 0.16) {
         walkingRef.current = false;
-        if (roll < 0.07 && tryStartDuet()) {
+        if (roll < 0.02 && tryStartDuet()) {
           timeoutRef.current = setTimeout(schedule, rand(6200, 7600));
           return;
         }
-        if (roll < 0.14) {
+        if (roll < 0.07) {
           showQuip(pickGeckoQuip(), rand(2800, 4200));
         }
-        timeoutRef.current = setTimeout(schedule, rand(900, 2400));
+        timeoutRef.current = setTimeout(schedule, rand(1600, 3600));
         return;
       }
       if (roll < 0.32) {
