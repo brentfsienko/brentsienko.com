@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PixelBee } from "@/components/PixelArt";
+import { CritterBubble } from "@/components/CritterBubble";
 import { getGeckoPose, onCritterChat, tryStartDuet } from "@/components/critterChat";
 
 type Point = { x: number; y: number };
@@ -11,6 +12,7 @@ const BEE_W = 44;
 const BEE_H = 32;
 const DASH_GAP = 12;
 const TRAIL_MS = 1800;
+const GECKO_ROOM = 28;
 
 const QUIPS = [
   "leave no trace. take only nectar.",
@@ -148,10 +150,16 @@ export function WanderingBee() {
 
     const geckoMeet = (): Point => {
       const pose = getGeckoPose();
-      if (pose.side === "bottom") return { x: pose.x - 22, y: pose.y - 40 };
-      if (pose.side === "right") return { x: pose.x - 50, y: pose.y - 16 };
-      if (pose.side === "left") return { x: pose.x + 12, y: pose.y - 16 };
-      return { x: pose.x - 22, y: pose.y + 8 };
+      if (pose.side === "bottom") {
+        return { x: pose.x - BEE_W / 2 - 36, y: pose.y - GECKO_ROOM - BEE_H };
+      }
+      if (pose.side === "right") {
+        return { x: pose.x - BEE_W - 44, y: pose.y - BEE_H / 2 };
+      }
+      if (pose.side === "left") {
+        return { x: pose.x + 36, y: pose.y - BEE_H / 2 };
+      }
+      return { x: pose.x - BEE_W / 2 - 48, y: pose.y + 28 };
     };
 
     const pickTarget = (
@@ -319,12 +327,13 @@ export function WanderingBee() {
           }}
         >
           {quip ? (
-            <div
-              className="bee-bubble absolute left-1/2 bottom-full mb-2 -translate-x-1/2"
-              role="status"
-            >
-              {quip}
-            </div>
+            <CritterBubble
+              who="bee"
+              text={quip}
+              anchorX={pos.x + BEE_W / 2}
+              anchorY={pos.y}
+              preferred="above"
+            />
           ) : null}
           <PixelBee
             width={BEE_W}

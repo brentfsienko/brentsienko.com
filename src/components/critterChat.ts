@@ -1,3 +1,5 @@
+import type { Box } from "@/components/speechBubble";
+
 export type Critter = "bee" | "gecko";
 export type ChatLine = { from: Critter; text: string };
 
@@ -127,4 +129,35 @@ export function tryStartDuet() {
 
 export function isChatBusy() {
   return chatLock;
+}
+
+const speechBoxes: Record<Critter, Box | null> = { bee: null, gecko: null };
+const speechListeners = new Set<(who: Critter) => void>();
+
+function sameBox(a: Box | null, b: Box | null) {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return (
+    a.left === b.left &&
+    a.top === b.top &&
+    a.right === b.right &&
+    a.bottom === b.bottom
+  );
+}
+
+export function setSpeechBox(who: Critter, box: Box | null) {
+  if (sameBox(speechBoxes[who], box)) return;
+  speechBoxes[who] = box;
+  speechListeners.forEach((cb) => cb(who));
+}
+
+export function getSpeechBox(who: Critter) {
+  return speechBoxes[who];
+}
+
+export function onSpeechBoxChange(cb: (who: Critter) => void) {
+  speechListeners.add(cb);
+  return () => {
+    speechListeners.delete(cb);
+  };
 }

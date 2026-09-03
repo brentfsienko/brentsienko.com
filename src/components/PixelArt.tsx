@@ -556,8 +556,8 @@ export function PixelLineGecko({
 
   const hindNearX = step === 0 ? 6 : 11;
   const hindFarX = step === 0 ? 12 : 7;
-  const frontFarX = step === 0 ? 24 : 29;
-  const frontNearX = step === 0 ? 30 : 25;
+  const frontFarX = step === 0 ? 19 : 24;
+  const frontNearX = step === 0 ? 25 : 20;
 
   const farLeg = (footX: number) =>
     [

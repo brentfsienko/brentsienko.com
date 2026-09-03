@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PixelLineGecko } from "@/components/PixelArt";
+import { CritterBubble } from "@/components/CritterBubble";
+import type { Placement } from "@/components/speechBubble";
 import {
   isChatBusy,
   onCritterChat,
@@ -72,10 +74,29 @@ function wallTransform(side: GeckoSide, dir: number) {
   return `scaleX(${face})`;
 }
 
-function bubbleShift(side: GeckoSide) {
-  if (side === "right") return "translate(calc(-100% - 10px), -50%)";
-  if (side === "left") return "translate(10px, -50%)";
-  return "translate(-50%, calc(-100% - 8px))";
+function geckoBubble(side: GeckoSide, at: { x: number; y: number }) {
+  if (side === "top") {
+    return { anchorX: at.x, anchorY: at.y, preferred: "below" as Placement };
+  }
+  if (side === "bottom") {
+    return {
+      anchorX: at.x,
+      anchorY: at.y - GECKO_H,
+      preferred: "above" as Placement,
+    };
+  }
+  if (side === "right") {
+    return {
+      anchorX: at.x - 6,
+      anchorY: at.y - GECKO_H / 2,
+      preferred: "left" as Placement,
+    };
+  }
+  return {
+    anchorX: at.x + 6,
+    anchorY: at.y - GECKO_H / 2,
+    preferred: "right" as Placement,
+  };
 }
 
 export function LineGecko() {
@@ -265,13 +286,11 @@ export function LineGecko() {
       aria-hidden
     >
       {quip ? (
-        <div
-          className="bee-bubble absolute z-[33] whitespace-nowrap"
-          style={{ transform: bubbleShift(side) }}
-          role="status"
-        >
-          {quip}
-        </div>
+        <CritterBubble
+          who="gecko"
+          text={quip}
+          {...geckoBubble(side, at)}
+        />
       ) : null}
       <div
         style={{
