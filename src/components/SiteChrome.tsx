@@ -39,9 +39,9 @@ export function SiteHeader() {
         </nav>
       </div>
 
-      {/* Hive hangs from the header rule (branch sits on the ink line). */}
+      {/* Hive hangs from the left of the header rule (branch sits on the ink line). */}
       <div
-        className="pointer-events-none absolute right-3 top-full z-40 -translate-y-[2px] sm:right-5"
+        className="pointer-events-none absolute left-3 top-full z-40 -translate-y-[2px] sm:left-5"
         aria-hidden
       >
         <div className="relative" style={{ width: 64, height: 72 }}>

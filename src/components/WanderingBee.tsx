@@ -110,17 +110,16 @@ export function WanderingBee() {
           y: r.top + r.height / 2 - BEE_H / 2,
         };
       }
-      const w = window.innerWidth;
-      const sm = w >= 640;
-      const right = sm ? 20 : 12;
-      // Approx header content height + border; hive hangs just below the rule
+      const sm = window.innerWidth >= 640;
+      const left = sm ? 20 : 12;
+      // Approx header content height + border; hive hangs just below the left of the rule
       const headerBottom = 58;
       const hiveW = 64;
       const hiveH = 72;
       const entrX = (14 / 28) * hiveW;
       const entrY = (22 / 32) * hiveH;
       return {
-        x: w - right - hiveW + entrX - BEE_W / 2,
+        x: left + entrX - BEE_W / 2,
         y: headerBottom - 2 + entrY - BEE_H / 2,
       };
     };
@@ -310,7 +309,7 @@ export function WanderingBee() {
       )}
 
       {reducedMotion && (
-        <div className="absolute right-[4.5rem] top-[4.25rem]">
+        <div className="absolute left-[4.5rem] top-[4.25rem]">
           <PixelBee width={36} height={26} className="!animate-none" />
         </div>
       )}

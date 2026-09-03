@@ -280,6 +280,170 @@ export function PixelFlower({
   );
 }
 
+type BloomPalette = "rose" | "gold" | "lilac" | "pine" | "sky";
+type BloomShape = "daisy" | "bench" | "pup" | "burst" | "tulip" | "heart";
+
+const bloomPalette: Record<
+  BloomPalette,
+  { outer: string; inner: string; center: string; eye: string }
+> = {
+  rose: { outer: "#e06b7a", inner: "#f3a8b2", center: "#f4d56a", eye: "#d4893a" },
+  gold: { outer: "#e8a84a", inner: "#f6d07a", center: "#fff6dc", eye: "#c9842a" },
+  lilac: { outer: "#b07ec4", inner: "#d7b6e6", center: "#f4d56a", eye: "#8a5a9a" },
+  pine: { outer: "#3d7a4a", inner: "#8fc49e", center: "#f4d56a", eye: "#2d6a44" },
+  sky: { outer: "#4f8ec8", inner: "#a8d0ee", center: "#fff6dc", eye: "#2f6a9a" },
+};
+
+type PixelCell = [x: number, y: number, w: number, h: number, fill: string];
+
+function bloomCells(
+  shape: BloomShape,
+  o: string,
+  i: string,
+  c: string,
+  e: string,
+): PixelCell[] {
+  if (shape === "heart") {
+    return [
+      [2, 1, 5, 4, o],
+      [9, 1, 5, 4, o],
+      [1, 4, 14, 6, o],
+      [3, 10, 10, 3, o],
+      [5, 13, 6, 2, o],
+      [7, 15, 2, 1, o],
+      [4, 4, 3, 3, i],
+      [9, 4, 3, 3, i],
+      [4, 6, 8, 5, i],
+      [6, 8, 4, 4, c],
+      [7, 10, 2, 2, e],
+    ];
+  }
+  if (shape === "tulip") {
+    return [
+      [7, 0, 2, 2, o],
+      [5, 1, 2, 3, o],
+      [9, 1, 2, 3, o],
+      [3, 3, 3, 4, o],
+      [10, 3, 3, 4, o],
+      [4, 4, 8, 8, o],
+      [5, 6, 6, 7, i],
+      [6, 8, 4, 5, c],
+      [7, 10, 2, 2, e],
+      [6, 12, 4, 2, o],
+    ];
+  }
+  if (shape === "bench") {
+    return [
+      [6, 0, 4, 5, o],
+      [11, 6, 5, 4, o],
+      [6, 11, 4, 5, o],
+      [0, 6, 5, 4, o],
+      [5, 5, 6, 6, i],
+      [6, 6, 4, 4, c],
+      [7, 7, 2, 2, e],
+    ];
+  }
+  if (shape === "pup") {
+    return [
+      [1, 0, 4, 4, o],
+      [11, 0, 4, 4, o],
+      [2, 1, 2, 2, i],
+      [12, 1, 2, 2, i],
+      [3, 4, 10, 10, o],
+      [5, 6, 6, 6, i],
+      [6, 7, 4, 4, c],
+      [5, 8, 2, 2, e],
+      [9, 8, 2, 2, e],
+      [6, 11, 4, 1, o],
+      [4, 14, 3, 2, o],
+      [9, 14, 3, 2, o],
+    ];
+  }
+  if (shape === "burst") {
+    return [
+      [7, 0, 2, 5, o],
+      [11, 1, 4, 2, o],
+      [13, 3, 3, 3, o],
+      [14, 7, 2, 2, o],
+      [13, 10, 3, 3, o],
+      [11, 13, 4, 2, o],
+      [7, 11, 2, 5, o],
+      [1, 13, 4, 2, o],
+      [0, 10, 3, 3, o],
+      [0, 7, 2, 2, o],
+      [0, 3, 3, 3, o],
+      [1, 1, 4, 2, o],
+      [4, 4, 8, 8, i],
+      [6, 6, 4, 4, c],
+      [7, 7, 2, 2, e],
+    ];
+  }
+  return [
+    [7, 0, 2, 3, o],
+    [11, 1, 3, 3, o],
+    [13, 7, 3, 2, o],
+    [11, 11, 3, 3, o],
+    [7, 13, 2, 3, o],
+    [2, 11, 3, 3, o],
+    [0, 7, 3, 2, o],
+    [2, 1, 3, 3, o],
+    [5, 1, 2, 2, o],
+    [9, 1, 2, 2, o],
+    [13, 5, 2, 2, o],
+    [13, 9, 2, 2, o],
+    [9, 13, 2, 2, o],
+    [5, 13, 2, 2, o],
+    [1, 9, 2, 2, o],
+    [1, 5, 2, 2, o],
+    [6, 4, 4, 2, i],
+    [4, 6, 2, 4, i],
+    [10, 6, 2, 4, i],
+    [6, 10, 4, 2, i],
+    [5, 5, 2, 2, i],
+    [9, 5, 2, 2, i],
+    [5, 9, 2, 2, i],
+    [9, 9, 2, 2, i],
+    [6, 6, 4, 4, c],
+    [7, 7, 2, 2, e],
+  ];
+}
+
+type BloomProps = Props & {
+  palette?: BloomPalette;
+  shape?: BloomShape;
+  sway?: boolean;
+};
+
+/** Pixel blooms from the year-in-review report, with a short stem for planting. */
+export function PixelBloom({
+  className = "",
+  width = 48,
+  height = 84,
+  palette = "rose",
+  shape = "daisy",
+  sway = false,
+}: BloomProps) {
+  const { outer, inner, center, eye } = bloomPalette[palette];
+  const cells = bloomCells(shape, outer, inner, center, eye);
+  return (
+    <svg
+      className={`pixel ${sway ? "flower-sway" : ""} ${className}`}
+      width={width}
+      height={height}
+      viewBox="0 0 16 28"
+      shapeRendering="crispEdges"
+      aria-hidden
+    >
+      {cells.map(([x, y, w, h, fill], idx) => (
+        <rect key={idx} x={x} y={y} width={w} height={h} fill={fill} />
+      ))}
+      <rect x="7" y="16" width="2" height="11" fill="#2d6a44" />
+      <rect x="3" y="19" width="4" height="2" fill="#3d7a4a" />
+      <rect x="9" y="22" width="4" height="2" fill="#4a8f58" />
+    </svg>
+  );
+}
+
 export function PixelBee({ className = "", width = 40, height = 28 }: Props) {
   return (
     <svg
