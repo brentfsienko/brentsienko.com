@@ -3,10 +3,10 @@ import { HomeGround } from "@/components/HomeGround";
 
 export default function HomePage() {
   return (
-    <section className="home-scene relative min-h-[calc(100vh-7.5rem)]">
+    <section className="home-scene relative">
       <HomeGround />
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-7.5rem)] max-w-5xl flex-col justify-center px-4 py-16 sm:px-6">
+      <div className="relative z-10 mx-auto flex min-h-0 max-w-5xl flex-1 flex-col justify-center px-4 py-8 sm:px-6">
         <h1 className="text-4xl font-bold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
           brent
           <br />

@@ -57,6 +57,29 @@ body {
   min-height: 100vh;
 }
 
+html:has(.home-scene),
+body:has(.home-scene) {
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body:has(.home-scene) main {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 0;
+}
+
+.home-scene {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 ::selection {
   background: var(--sun);
   color: var(--ink);
