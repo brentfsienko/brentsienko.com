@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { PixelHive } from "@/components/PixelArt";
-import { LineGecko } from "@/components/LineGecko";
 
 const links = [
   { href: "/craft", label: "craft" },
@@ -39,8 +38,6 @@ export function SiteHeader() {
           })}
         </nav>
       </div>
-
-      <LineGecko />
 
       {/* Hive hangs from the left of the header rule (branch sits on the ink line). */}
       <div

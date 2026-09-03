@@ -17,13 +17,15 @@ export const GECKO_QUIPS = [
   "sticky toes, loose plans.",
   "camouflage is just introversion with better branding.",
   "lick the dew. skip the drama.",
-  "four legs, one vibe: horizontal.",
+  "four legs, one vibe: clingy.",
   "I don't run. I relocate.",
   "the void is big. this fence post isn't.",
   "trees don't rush. neither do lizards.",
   "ssstay on the trail. or the wall.",
   "good outdoor rule #1: find the sun.",
   "exist softly. cling loudly.",
+  "the walls have ears. and now a gecko.",
+  "gravity is a suggestion. the corner disagrees.",
 ];
 
 export const DUETS: [ChatLine, ChatLine][] = [
@@ -69,7 +71,7 @@ export const DUETS: [ChatLine, ChatLine][] = [
   ],
   [
     { from: "bee", text: "touch grass." },
-    { from: "gecko", text: "I am touching this entire header." },
+    { from: "gecko", text: "I am touching this entire frame." },
   ],
   [
     { from: "gecko", text: "got any spare warmth?" },
@@ -77,15 +79,21 @@ export const DUETS: [ChatLine, ChatLine][] = [
   ],
 ];
 
-let geckoX = 80;
+export type GeckoSide = "top" | "right" | "bottom" | "left";
+
+let geckoPose = { x: 80, y: 56, side: "top" as GeckoSide };
 let chatLock = false;
 
-export function setGeckoX(x: number) {
-  geckoX = x;
+export function setGeckoPose(pose: { x: number; y: number; side: GeckoSide }) {
+  geckoPose = pose;
 }
 
 export function getGeckoX() {
-  return geckoX;
+  return geckoPose.x;
+}
+
+export function getGeckoPose() {
+  return geckoPose;
 }
 
 export function onCritterChat(cb: (line: ChatLine) => void) {

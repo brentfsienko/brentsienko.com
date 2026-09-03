@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
+import { LineGecko } from "@/components/LineGecko";
 import { WanderingBee } from "@/components/WanderingBee";
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default function RootLayout({
     <html lang="en" className={`${jetbrains.variable} h-full`}>
       <body className="paper-grain flex min-h-full flex-col font-mono text-ink antialiased">
         <SiteHeader />
+        <LineGecko />
         <WanderingBee />
         <main className="relative z-10 flex-1 pb-24">{children}</main>
         <SiteFooter />

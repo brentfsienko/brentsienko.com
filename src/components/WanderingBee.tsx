@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PixelBee } from "@/components/PixelArt";
-import { getGeckoX, onCritterChat, tryStartDuet } from "@/components/critterChat";
+import { getGeckoPose, onCritterChat, tryStartDuet } from "@/components/critterChat";
 
 type Point = { x: number; y: number };
 type Dash = { id: number; x: number; y: number; angle: number };
@@ -147,12 +147,11 @@ export function WanderingBee() {
     let legsSinceChat = 99;
 
     const geckoMeet = (): Point => {
-      const header = document.querySelector("header");
-      const bottom = header?.getBoundingClientRect().bottom ?? 56;
-      return {
-        x: getGeckoX() + 8,
-        y: bottom + 6,
-      };
+      const pose = getGeckoPose();
+      if (pose.side === "bottom") return { x: pose.x - 22, y: pose.y - 40 };
+      if (pose.side === "right") return { x: pose.x - 50, y: pose.y - 16 };
+      if (pose.side === "left") return { x: pose.x + 12, y: pose.y - 16 };
+      return { x: pose.x - 22, y: pose.y + 8 };
     };
 
     const pickTarget = (
