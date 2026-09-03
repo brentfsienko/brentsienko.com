@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { PixelHive } from "@/components/PixelArt";
+import { LineGecko } from "@/components/LineGecko";
 
 const links = [
   { href: "/craft", label: "craft" },
@@ -21,7 +22,7 @@ export function SiteHeader() {
         <Link href="/" className="shrink-0 text-sm font-bold tracking-tight no-underline hover:opacity-70">
           brent sienko
         </Link>
-        <nav className="flex min-w-0 flex-nowrap items-center gap-3 overflow-x-auto text-sm sm:gap-6">
+        <nav className="relative z-[22] flex min-w-0 flex-nowrap items-center gap-3 overflow-x-auto pb-1 text-sm sm:gap-6">
           {links.map((link) => {
             const current =
               pathname === link.href || pathname.startsWith(`${link.href}/`);
@@ -38,6 +39,8 @@ export function SiteHeader() {
           })}
         </nav>
       </div>
+
+      <LineGecko />
 
       {/* Hive hangs from the left of the header rule (branch sits on the ink line). */}
       <div

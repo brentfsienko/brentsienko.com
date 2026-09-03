@@ -538,3 +538,81 @@ export function PixelGecko({ className = "", width = 72, height = 48 }: Props) {
     </svg>
   );
 }
+
+type WalkGeckoProps = Props & { step?: 0 | 1 };
+
+/** Compact gecko for the header rule. Head faces right. Two clear leg pairs, feet on the line. */
+export function PixelLineGecko({
+  className = "",
+  width = 58,
+  height = 24,
+  step = 0,
+}: WalkGeckoProps) {
+  const G = "#3d9a60";
+  const G2 = "#4cb574";
+  const G3 = "#2f7a4a";
+  const G4 = "#1e4f30";
+  const eye = "#d7ef9a";
+
+  const hindNearX = step === 0 ? 6 : 11;
+  const hindFarX = step === 0 ? 12 : 7;
+  const frontFarX = step === 0 ? 24 : 29;
+  const frontNearX = step === 0 ? 30 : 25;
+
+  const farLeg = (footX: number) =>
+    [
+      [footX + 1, 10, 3, 2, G4],
+      [footX + 1, 12, 2, 3, G4],
+      [footX, 15, 4, 2, G3],
+    ] as const;
+  const nearLeg = (footX: number) =>
+    [
+      [footX + 1, 11, 3, 2, G3],
+      [footX + 1, 13, 2, 2, G3],
+      [footX, 15, 5, 2, G4],
+    ] as const;
+
+  return (
+    <svg
+      className={`pixel block ${className}`}
+      width={width}
+      height={height}
+      viewBox="0 0 42 17"
+      shapeRendering="crispEdges"
+      aria-hidden
+    >
+      {farLeg(hindFarX).map(([x, y, w, h, fill], i) => (
+        <rect key={`fh${i}`} x={x} y={y} width={w} height={h} fill={fill} />
+      ))}
+      {farLeg(frontFarX).map(([x, y, w, h, fill], i) => (
+        <rect key={`ff${i}`} x={x} y={y} width={w} height={h} fill={fill} />
+      ))}
+      {/* tail */}
+      <rect x="0" y="6" width="2" height="2" fill={G4} />
+      <rect x="2" y="7" width="3" height="2" fill={G} />
+      <rect x="5" y="8" width="3" height="2" fill={G2} />
+      {/* body */}
+      <rect x="8" y="7" width="16" height="4" fill={G} />
+      <rect x="10" y="6" width="12" height="2" fill={G2} />
+      <rect x="9" y="10" width="14" height="1" fill={G3} />
+      {/* gecko head: bulbous skull, huge eye, short rounded snout */}
+      <rect x="23" y="6" width="4" height="5" fill={G} />
+      <rect x="26" y="4" width="7" height="7" fill={G} />
+      <rect x="27" y="3" width="5" height="2" fill={G2} />
+      <rect x="28" y="5" width="5" height="5" fill={eye} />
+      <rect x="29" y="6" width="3" height="3" fill="#1a1a1a" />
+      <rect x="31" y="6" width="1" height="1" fill="#f4f2ec" />
+      <rect x="32" y="7" width="2" height="3" fill={G2} />
+      <rect x="33" y="8" width="2" height="2" fill={G} />
+      <rect x="34" y="8" width="1" height="1" fill={G4} />
+      <rect x="27" y="10" width="6" height="1" fill={G4} />
+      <rect x="28" y="11" width="4" height="1" fill={G3} />
+      {nearLeg(hindNearX).map(([x, y, w, h, fill], i) => (
+        <rect key={`nh${i}`} x={x} y={y} width={w} height={h} fill={fill} />
+      ))}
+      {nearLeg(frontNearX).map(([x, y, w, h, fill], i) => (
+        <rect key={`nf${i}`} x={x} y={y} width={w} height={h} fill={fill} />
+      ))}
+    </svg>
+  );
+}

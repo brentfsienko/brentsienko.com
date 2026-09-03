@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { PixelBee } from "@/components/PixelArt";
+import { getGeckoX, onCritterChat, tryStartDuet } from "@/components/critterChat";
 
 type Point = { x: number; y: number };
 type Dash = { id: number; x: number; y: number; angle: number };
@@ -141,20 +142,31 @@ export function WanderingBee() {
       };
     };
 
-    type TargetKind = "wander" | "hive" | "chat";
+    type TargetKind = "wander" | "hive" | "chat" | "duet";
 
     let legsSinceChat = 99;
+
+    const geckoMeet = (): Point => {
+      const header = document.querySelector("header");
+      const bottom = header?.getBoundingClientRect().bottom ?? 56;
+      return {
+        x: getGeckoX() + 8,
+        y: bottom + 6,
+      };
+    };
 
     const pickTarget = (
       from: Point,
       allowHive: boolean,
     ): { point: Point; kind: TargetKind } => {
       const roll = Math.random();
-      // Chat sparingly — only after a few other legs, ~8% when eligible
-      if (legsSinceChat >= 3 && roll < 0.08) {
+      if (legsSinceChat >= 3 && roll < 0.1) {
+        return { point: geckoMeet(), kind: "duet" };
+      }
+      if (legsSinceChat >= 3 && roll < 0.18) {
         return { point: centerSpot(), kind: "chat" };
       }
-      if (allowHive && roll < 0.08 + 0.2) return { point: hive(), kind: "hive" };
+      if (allowHive && roll < 0.28) return { point: hive(), kind: "hive" };
       let next = randomSpot();
       let tries = 0;
       while (
@@ -180,7 +192,6 @@ export function WanderingBee() {
       let lastDashAt = { ...from };
       setFacingLeft(to.x < from.x);
       setVisible(true);
-      setQuip(null);
 
       const tick = (now: number) => {
         if (cancelled) return;
@@ -214,7 +225,7 @@ export function WanderingBee() {
       const allowHive = !justLeftHive;
       justLeftHive = false;
       const { point: target, kind } = pickTarget(posRef.current, allowHive);
-      if (kind === "chat") legsSinceChat = 0;
+      if (kind === "chat" || kind === "duet") legsSinceChat = 0;
       else legsSinceChat += 1;
 
       flyTo(target, () => {
@@ -234,6 +245,16 @@ export function WanderingBee() {
           return;
         }
 
+        if (kind === "duet") {
+          tryStartDuet();
+          timeoutRef.current = setTimeout(() => {
+            if (cancelled) return;
+            setQuip(null);
+            loop();
+          }, rand(6200, 7800));
+          return;
+        }
+
         if (kind === "chat") {
           setQuip(pickQuip());
           timeoutRef.current = setTimeout(() => {
@@ -247,6 +268,11 @@ export function WanderingBee() {
         timeoutRef.current = setTimeout(loop, rand(200, 900));
       });
     };
+
+    const stopChat = onCritterChat((line) => {
+      if (line.from !== "bee") return;
+      setQuip(line.text);
+    });
 
     const start = hive();
     posRef.current = start;
@@ -263,6 +289,7 @@ export function WanderingBee() {
 
     return () => {
       cancelled = true;
+      stopChat();
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       for (const t of dashTimeoutsRef.current) clearTimeout(t);
