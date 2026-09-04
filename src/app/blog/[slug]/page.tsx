@@ -39,7 +39,18 @@ export default async function BlogPostPage({ params }: Props) {
         </p>
       )}
       <div className="prose-sketch mt-8">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.body}</ReactMarkdown>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            img: ({ src, alt }) =>
+              typeof src === "string" ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={src} alt={alt ?? ""} className="blog-photo" />
+              ) : null,
+          }}
+        >
+          {post.body}
+        </ReactMarkdown>
       </div>
     </article>
   );

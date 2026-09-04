@@ -421,6 +421,16 @@ a:hover {
   color: inherit;
 }
 
+.prose-sketch img,
+.blog-photo {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 1.25rem 0;
+  border: 2px solid var(--ink);
+}
+
 /* ── Radio live indicator ── */
 .radio-live-dot {
   display: inline-block;
