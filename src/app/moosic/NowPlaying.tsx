@@ -10,6 +10,22 @@ type NowPlayingData =
 
 const POLL_MS = 15_000;
 
+function isTrack(
+  data: NowPlayingData,
+): data is Extract<NowPlayingData, { kind: "track" }> {
+  return !("configured" in data) && data.kind === "track";
+}
+
+function preferStable(prev: NowPlayingData | null, next: NowPlayingData): NowPlayingData {
+  if ("configured" in next && !next.configured) {
+    return prev && isTrack(prev) ? prev : next;
+  }
+  if (next.kind === "playlist" && prev && isTrack(prev)) {
+    return prev;
+  }
+  return next;
+}
+
 function LiveBadge({ live, kind }: { live: boolean; kind: "track" | "playlist" }) {
   const label = live
     ? "broadcasting live"
@@ -40,7 +56,7 @@ export function NowPlaying() {
       const res = await fetch("/api/radio/now", { cache: "no-store" });
       if (!res.ok) throw new Error();
       const json = await res.json() as NowPlayingData;
-      setData(json);
+      setData((prev) => preferStable(prev, json));
       setError(false);
     } catch {
       setError(true);

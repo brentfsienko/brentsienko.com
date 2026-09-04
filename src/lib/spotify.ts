@@ -6,25 +6,32 @@ export type NowPlayingResult =
   | { live: false; kind: "playlist"; id: string; title: string; artist: null; albumArt: string | null };
 
 type SpotifyTrack = {
-  id: string;
-  name: string;
-  artists: { name: string }[];
-  album: { images: { url: string }[] };
+  id?: string;
+  name?: string;
+  artists?: { name: string }[];
+  album?: { images?: { url: string }[] };
 };
 
-function asTrack(item: SpotifyTrack, live: boolean): Extract<NowPlayingResult, { kind: "track" }> {
+function asTrack(item: SpotifyTrack, live: boolean): Extract<NowPlayingResult, { kind: "track" }> | null {
+  if (!item.id || !item.name) return null;
   return {
     live,
     kind: "track",
     id: item.id,
     title: item.name,
-    artist: item.artists.map((a) => a.name).join(", "),
-    albumArt: item.album.images[0]?.url ?? null,
+    artist: (item.artists ?? []).map((a) => a.name).join(", "),
+    albumArt: item.album?.images?.[0]?.url ?? null,
   };
 }
 
 type TokenCache = { accessToken: string; expiresAt: number };
 let tokenCache: TokenCache | null = null;
+let lastHeardTrack: Extract<NowPlayingResult, { kind: "track" }> | null = null;
+
+function remember(track: Extract<NowPlayingResult, { kind: "track" }>) {
+  lastHeardTrack = { ...track, live: false };
+  return track;
+}
 
 function isSpotifyConfigured() {
   return (
@@ -114,8 +121,7 @@ async function getRecentlyPlayedTrack(): Promise<Extract<NowPlayingResult, { kin
     if (!res.ok) return null;
     const data = await res.json() as { items: { track: SpotifyTrack | null }[] };
     const track = data.items[0]?.track;
-    if (!track?.id) return null;
-    return asTrack(track, false);
+    return asTrack(track ?? {}, false);
   } catch {
     return null;
   }
@@ -123,7 +129,8 @@ async function getRecentlyPlayedTrack(): Promise<Extract<NowPlayingResult, { kin
 
 async function getIdleNowPlaying(): Promise<NowPlayingResult | null> {
   const recent = await getRecentlyPlayedTrack();
-  if (recent) return recent;
+  if (recent) return remember(recent);
+  if (lastHeardTrack) return lastHeardTrack;
 
   const daylist = await findDaylistPlaylist();
   if (!daylist) return null;
@@ -150,16 +157,18 @@ export async function getNowPlaying(): Promise<NowPlayingResult | null> {
     const data = await res.json() as {
       is_playing: boolean;
       item: SpotifyTrack | null;
-      currently_playing_type: string;
+      currently_playing_type?: string;
     };
 
-    if (data.item && data.currently_playing_type === "track") {
-      return asTrack(data.item, data.is_playing);
+    const type = data.currently_playing_type;
+    if (data.item && type !== "episode" && type !== "ad") {
+      const track = asTrack(data.item, Boolean(data.is_playing));
+      if (track) return remember(track);
     }
 
     return getIdleNowPlaying();
   } catch {
-    return null;
+    return lastHeardTrack;
   }
 }
 
