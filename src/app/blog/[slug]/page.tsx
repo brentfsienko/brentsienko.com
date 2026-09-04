@@ -28,6 +28,9 @@ export default async function BlogPostPage({ params }: Props) {
       <h1 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">
         {post.title}
       </h1>
+      {post.summary && (
+        <p className="mt-3 text-base text-ink-soft sm:text-lg">{post.summary}</p>
+      )}
       {post.published_at && (
         <p className="mt-3 text-xs text-ink-faint">
           {new Date(post.published_at).toLocaleDateString("en-US", {

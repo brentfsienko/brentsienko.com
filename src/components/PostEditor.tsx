@@ -291,6 +291,11 @@ export function PostEditor({ post }: Props) {
               <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
                 {title.trim() || "untitled"}
               </h1>
+              {summary.trim() ? (
+                <p className="mt-3 text-base text-ink-soft sm:text-lg">
+                  {summary.trim()}
+                </p>
+              ) : null}
               <p className="mt-3 text-xs text-ink-faint">
                 {new Date(post?.published_at ?? Date.now()).toLocaleDateString(
                   "en-US",
@@ -301,9 +306,6 @@ export function PostEditor({ post }: Props) {
                   },
                 )}
               </p>
-              {summary.trim() ? (
-                <p className="mt-4 text-sm text-ink-soft">{summary.trim()}</p>
-              ) : null}
               <div className="mt-8">
                 <BlogMarkdown body={body} empty="nothing to preview yet." />
               </div>
