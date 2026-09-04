@@ -4,6 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { PixelBee } from "@/components/PixelArt";
 import { CritterBubble } from "@/components/CritterBubble";
 import { getGeckoPose, onCritterChat, pickPerchQuip, tryStartDuet } from "@/components/critterChat";
+import {
+  isBehindOrInTree,
+  readTreeBox,
+  treeEdgeX,
+  type TreeBox,
+} from "@/components/treeSilhouette";
 
 type Point = { x: number; y: number };
 type Dash = { id: number; x: number; y: number; angle: number };
@@ -127,21 +133,46 @@ export function WanderingBee() {
       };
     };
 
+    const keepInFront = (p: Point, tree: TreeBox | null): Point => {
+      if (!tree) return p;
+      const cy = p.y + BEE_H / 2;
+      if (cy < tree.top - 20 || cy > tree.bottom + 12) return p;
+      const maxX = treeEdgeX(tree, cy, "left") - BEE_W - 6;
+      if (p.x > maxX) return { x: maxX, y: p.y };
+      return p;
+    };
+
     const centerSpot = (): Point => {
       const jitterX = rand(-48, 48);
       const jitterY = rand(-56, 56);
-      return {
-        x: window.innerWidth / 2 - BEE_W / 2 + jitterX,
-        y: window.innerHeight / 2 - BEE_H / 2 + jitterY,
-      };
+      return keepInFront(
+        {
+          x: window.innerWidth / 2 - BEE_W / 2 + jitterX,
+          y: window.innerHeight / 2 - BEE_H / 2 + jitterY,
+        },
+        readTreeBox(),
+      );
     };
 
     const randomSpot = (): Point => {
       const pad = 40;
-      return {
-        x: rand(pad, window.innerWidth - pad - 48),
+      const tree = readTreeBox();
+      const maxX = tree
+        ? Math.max(pad, treeEdgeX(tree, tree.top + tree.height * 0.38, "left") - BEE_W - 16)
+        : window.innerWidth - pad - 48;
+      let next = {
+        x: rand(pad, maxX),
         y: rand(pad + 48, window.innerHeight - pad - 32),
       };
+      let tries = 0;
+      while (tries < 8 && isBehindOrInTree(next.x + BEE_W / 2, next.y + BEE_H / 2, tree)) {
+        next = {
+          x: rand(pad, maxX),
+          y: rand(pad + 48, window.innerHeight - pad - 32),
+        };
+        tries += 1;
+      }
+      return keepInFront(next, tree);
     };
 
     type TargetKind = "wander" | "hive" | "chat" | "duet" | "chair" | "tree";
@@ -150,16 +181,18 @@ export function WanderingBee() {
 
     const geckoMeet = (): Point => {
       const pose = getGeckoPose();
+      const tree = readTreeBox();
+      let meet: Point;
       if (pose.side === "bottom" || pose.side === "chair" || pose.side === "rock") {
-        return { x: pose.x - BEE_W / 2 - 36, y: pose.y - GECKO_ROOM - BEE_H };
+        meet = { x: pose.x - BEE_W / 2 - 36, y: pose.y - GECKO_ROOM - BEE_H };
+      } else if (pose.side === "right" || pose.side === "tree") {
+        meet = { x: pose.x - BEE_W - 44, y: pose.y - BEE_H / 2 };
+      } else if (pose.side === "left") {
+        meet = { x: pose.x + 36, y: pose.y - BEE_H / 2 };
+      } else {
+        meet = { x: pose.x - BEE_W / 2 - 48, y: pose.y + 28 };
       }
-      if (pose.side === "right" || pose.side === "tree") {
-        return { x: pose.x - BEE_W - 44, y: pose.y - BEE_H / 2 };
-      }
-      if (pose.side === "left") {
-        return { x: pose.x + 36, y: pose.y - BEE_H / 2 };
-      }
-      return { x: pose.x - BEE_W / 2 - 48, y: pose.y + 28 };
+      return keepInFront(meet, tree);
     };
 
     const chairSpot = (): Point | null => {
@@ -174,14 +207,16 @@ export function WanderingBee() {
     };
 
     const treeSpot = (): Point | null => {
-      const tree = document.getElementById("home-tree");
+      const tree = readTreeBox();
       if (!tree) return null;
-      const r = tree.getBoundingClientRect();
-      if (r.width < 8) return null;
-      return {
-        x: r.left - BEE_W - 6,
-        y: r.top + r.height * 0.32,
-      };
+      const y = tree.top + tree.height * 0.34;
+      return keepInFront(
+        {
+          x: treeEdgeX(tree, y, "left") - BEE_W - 10,
+          y: y - BEE_H / 2,
+        },
+        tree,
+      );
     };
 
     const pickTarget = (
@@ -232,10 +267,13 @@ export function WanderingBee() {
         const e = easeInOut(t);
         const envelope = Math.sin(t * Math.PI);
         const wobble = Math.sin(t * Math.PI * wobbleFreq) * wobbleAmp * envelope;
-        const next = {
-          x: from.x + (to.x - from.x) * e,
-          y: from.y + (to.y - from.y) * e + wobble,
-        };
+        const next = keepInFront(
+          {
+            x: from.x + (to.x - from.x) * e,
+            y: from.y + (to.y - from.y) * e + wobble,
+          },
+          readTreeBox(),
+        );
         if (
           Math.hypot(next.x - lastDashAt.x, next.y - lastDashAt.y) >= DASH_GAP
         ) {

@@ -82,9 +82,13 @@ export function HomeGround() {
           className="relative z-[2] -mr-2 mb-px shrink-0 sm:-mr-3"
         >
           <PixelRock
-            width={52}
-            height={30}
-            className="w-[52px] sm:w-[60px] lg:w-[66px]"
+            width={64}
+            height={22}
+            className="w-[58px] sm:w-[66px] lg:w-[72px]"
+          />
+          <span
+            id="home-rock-top"
+            className="absolute left-[12%] right-[12%] top-[22%] h-px"
           />
         </div>
         <div

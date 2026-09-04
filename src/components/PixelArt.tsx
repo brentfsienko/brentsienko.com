@@ -464,6 +464,8 @@ export function PixelBee({ className = "", width = 40, height = 28 }: Props) {
       {/* two vertical stripes */}
       <rect x="7" y="5" width="2" height="6" fill="#1a1a1a" />
       <rect x="11" y="5" width="2" height="6" fill="#1a1a1a" />
+      {/* single-pixel eye on the front yellow of the head */}
+      <rect x="14" y="7" width="1" height="1" fill="#1a1a1a" />
     </svg>
   );
 }
@@ -539,26 +541,25 @@ export function PixelGecko({ className = "", width = 72, height = 48 }: Props) {
   );
 }
 
-/** A sun-warmed rock for the gecko to loaf on. */
-export function PixelRock({ className = "", width = 58, height = 34 }: Props) {
+/** A sun-warmed rock for the gecko to loaf on. Flat top, low loaf. */
+export function PixelRock({ className = "", width = 64, height = 22 }: Props) {
   return (
     <svg
       className={`pixel block ${className}`}
       width={width}
       height={height}
-      viewBox="0 0 29 17"
+      viewBox="0 0 32 12"
       shapeRendering="crispEdges"
       aria-hidden
     >
-      <rect x="4" y="13" width="21" height="3" fill="#4a4a4a" />
-      <rect x="2" y="10" width="25" height="4" fill="#5a5a5a" />
-      <rect x="5" y="7" width="19" height="4" fill="#6b6b6b" />
-      <rect x="8" y="5" width="13" height="3" fill="#7a7a7a" />
-      <rect x="10" y="4" width="8" height="2" fill="#8a8a8a" />
-      <rect x="12" y="3" width="4" height="2" fill="#9a9a9a" />
-      <rect x="3" y="12" width="3" height="2" fill="#3f3f3f" />
-      <rect x="23" y="12" width="3" height="2" fill="#3f3f3f" />
-      <rect x="7" y="8" width="3" height="2" fill="#8f8f8f" />
+      <rect x="6" y="2" width="20" height="2" fill="#9a9a9a" />
+      <rect x="4" y="3" width="24" height="2" fill="#8a8a8a" />
+      <rect x="3" y="5" width="26" height="3" fill="#6b6b6b" />
+      <rect x="2" y="8" width="28" height="2" fill="#5a5a5a" />
+      <rect x="4" y="10" width="24" height="2" fill="#4a4a4a" />
+      <rect x="3" y="8" width="3" height="2" fill="#3f3f3f" />
+      <rect x="26" y="8" width="3" height="2" fill="#3f3f3f" />
+      <rect x="8" y="3" width="5" height="2" fill="#b0b0b0" />
     </svg>
   );
 }

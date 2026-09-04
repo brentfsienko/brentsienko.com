@@ -13,6 +13,7 @@ import {
   tryStartDuet,
   type GeckoSide,
 } from "@/components/critterChat";
+import { treeEdgeX, treeTrunkX } from "@/components/treeSilhouette";
 
 const GECKO_W = 58;
 const GECKO_H = 24;
@@ -31,6 +32,7 @@ type Scene = Metrics & {
   chair: Rect | null;
   seat: Rect | null;
   rock: Rect | null;
+  rockTop: Rect | null;
 };
 
 function readRect(id: string): Rect | null {
@@ -65,6 +67,7 @@ function scene(): Scene {
     chair: readRect("home-chair"),
     seat: readRect("home-chair-seat"),
     rock: readRect("home-rock"),
+    rockTop: readRect("home-rock-top"),
   };
 }
 
@@ -110,7 +113,11 @@ function turnCorner(
     return { side: "bottom", along: HALF_W, dir: 1 };
   if (side === "left") return { side: "top", along: HALF_W, dir: 1 };
   if (side === "tree") {
-    return { side: "bottom", along: s.tree ? s.tree.left + 4 : s.w - HALF_W, dir: -1 };
+    return {
+      side: "bottom",
+      along: s.tree ? treeTrunkX(s.tree) : s.w - HALF_W,
+      dir: -1,
+    };
   }
   if (side === "chair") {
     const x = dir > 0 ? (s.chair?.right ?? s.w / 2) : (s.chair?.left ?? s.w / 2);
@@ -123,7 +130,7 @@ function turnCorner(
 function perchAt(along: number, s: Scene): "chair" | "tree" | "rock" | null {
   if (s.chair && along > s.chair.left + 6 && along < s.chair.right - 6) return "chair";
   if (s.rock && along > s.rock.left + 4 && along < s.rock.right - 4) return "rock";
-  if (s.tree && Math.abs(along - s.tree.left) < 18) return "tree";
+  if (s.tree && Math.abs(along - treeTrunkX(s.tree)) < 22) return "tree";
   return null;
 }
 
@@ -141,20 +148,26 @@ function feet(side: GeckoSide, along: number, s: Scene) {
   if (side === "right") return { x: s.w - 2, y: along };
   if (side === "left") return { x: 2, y: along };
   if (side === "tree") {
-    return { x: (s.tree?.left ?? s.w - 180) + 3, y: along };
+    return {
+      x: s.tree ? treeEdgeX(s.tree, along, "left") : s.w - 180,
+      y: along,
+    };
   }
   if (side === "chair") {
     const seatY = s.seat?.top ?? (s.chair ? s.chair.top + s.chair.height * 0.46 : s.bottom - 36);
     return { x: along, y: seatY };
   }
-  return { x: along, y: (s.rock?.top ?? s.bottom - 18) + 3 };
+  return {
+    x: along,
+    y: s.rockTop?.top ?? (s.rock?.top ?? s.bottom - 18) + 4,
+  };
 }
 
 function wallTransform(side: GeckoSide, dir: number) {
   const face = dir > 0 ? 1 : -1;
   if (side === "left") return `rotate(90deg) scaleX(${face})`;
   if (side === "right" || side === "tree") return `rotate(-90deg) scaleX(${-face})`;
-  if (side === "rock") return `scaleX(${face}) rotate(-10deg)`;
+  if (side === "rock") return `scaleX(${face})`;
   return `scaleX(${face})`;
 }
 
@@ -197,6 +210,7 @@ export function LineGecko() {
     chair: null,
     seat: null,
     rock: null,
+    rockTop: null,
   });
   const [reducedMotion, setReducedMotion] = useState(false);
   const alongRef = useRef(80);
