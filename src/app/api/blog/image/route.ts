@@ -1,11 +1,22 @@
-import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
+import { put } from "@vercel/blob";
+import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import { isBlogAuthed } from "@/lib/blog-auth";
 import { isBlobConfigured } from "@/lib/posts";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
-const TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+const TYPES = new Set(["image/jpeg", "image/png", "image/gif", "image/webp"]);
+const MAX_BYTES = 4.5 * 1024 * 1024;
+
+function extFor(type: string) {
+  if (type === "image/jpeg") return "jpg";
+  if (type === "image/png") return "png";
+  if (type === "image/gif") return "gif";
+  if (type === "image/webp") return "webp";
+  return "jpg";
+}
 
 export async function POST(request: Request) {
   if (!(await isBlogAuthed())) {
@@ -18,29 +29,42 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: HandleUploadBody;
+  let file: File | null = null;
   try {
-    body = (await request.json()) as HandleUploadBody;
+    const form = await request.formData();
+    const value = form.get("file");
+    file = value instanceof File ? value : null;
   } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    return NextResponse.json({ error: "Couldn't read that photo." }, { status: 400 });
+  }
+
+  if (!file || file.size === 0) {
+    return NextResponse.json({ error: "Choose a photo." }, { status: 400 });
+  }
+  if (!TYPES.has(file.type)) {
+    return NextResponse.json(
+      { error: "Use a jpg, png, gif, or webp." },
+      { status: 400 },
+    );
+  }
+  if (file.size > MAX_BYTES) {
+    return NextResponse.json(
+      { error: "That photo is still too big after shrinking. Try another." },
+      { status: 400 },
+    );
   }
 
   try {
-    const json = await handleUpload({
-      body,
-      request,
-      onBeforeGenerateToken: async (pathname) => {
-        if (!pathname.startsWith("blog/images/")) {
-          throw new Error("Photos must go under blog/images/");
-        }
-        return {
-          allowedContentTypes: TYPES,
-          maximumSizeInBytes: 12 * 1024 * 1024,
-          addRandomSuffix: true,
-        };
+    const blob = await put(
+      `blog/images/${randomUUID()}.${extFor(file.type)}`,
+      file,
+      {
+        access: "public",
+        addRandomSuffix: false,
+        contentType: file.type,
       },
-    });
-    return NextResponse.json(json);
+    );
+    return NextResponse.json({ url: blob.url });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Upload failed." },
