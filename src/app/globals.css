@@ -16,6 +16,12 @@
   --bee-dark: #1a1a1a;
   --site-header-h: 3.25rem;
   --site-footer-h: 2.25rem;
+  --site-col: 64rem;
+  --site-pad: 1rem;
+  --site-left: max(
+    var(--site-pad),
+    calc((100vw - min(var(--site-col), 100vw)) / 2 + var(--site-pad))
+  );
   --home-rule-gap: calc(100dvh - var(--site-header-h) - var(--site-footer-h));
   --home-tree-h: calc(var(--home-rule-gap) * 0.98);
 }
@@ -23,6 +29,7 @@
 @media (min-width: 640px) {
   :root {
     --site-header-h: 3.75rem;
+    --site-pad: 1.5rem;
   }
 }
 

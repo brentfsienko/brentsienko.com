@@ -539,6 +539,30 @@ export function PixelGecko({ className = "", width = 72, height = 48 }: Props) {
   );
 }
 
+/** A sun-warmed rock for the gecko to loaf on. */
+export function PixelRock({ className = "", width = 58, height = 34 }: Props) {
+  return (
+    <svg
+      className={`pixel block ${className}`}
+      width={width}
+      height={height}
+      viewBox="0 0 29 17"
+      shapeRendering="crispEdges"
+      aria-hidden
+    >
+      <rect x="4" y="13" width="21" height="3" fill="#4a4a4a" />
+      <rect x="2" y="10" width="25" height="4" fill="#5a5a5a" />
+      <rect x="5" y="7" width="19" height="4" fill="#6b6b6b" />
+      <rect x="8" y="5" width="13" height="3" fill="#7a7a7a" />
+      <rect x="10" y="4" width="8" height="2" fill="#8a8a8a" />
+      <rect x="12" y="3" width="4" height="2" fill="#9a9a9a" />
+      <rect x="3" y="12" width="3" height="2" fill="#3f3f3f" />
+      <rect x="23" y="12" width="3" height="2" fill="#3f3f3f" />
+      <rect x="7" y="8" width="3" height="2" fill="#8f8f8f" />
+    </svg>
+  );
+}
+
 type WalkGeckoProps = Props & { step?: 0 | 1 };
 
 /** Compact gecko for the header rule. Head faces right. Two clear leg pairs, feet on the line. */

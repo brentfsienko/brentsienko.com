@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState, type CSSProperties } from "react";
-import { PixelBloom } from "@/components/PixelArt";
+import { PixelBloom, PixelRock } from "@/components/PixelArt";
 
 /** Clip region of /art/tree.svg (viewBox 262.5 × 262.5). */
 const TREE_BOX = { left: 19.13, top: 0, width: 193.13, height: 262 };
@@ -60,15 +60,35 @@ export function HomeGround() {
         }}
         aria-hidden
       >
-        <Image
-          src="/art/pixel-chair.png"
-          alt=""
-          width={1024}
-          height={1024}
-          className="pixel relative z-[1] -mr-2 w-[72px] max-w-none shrink-0 select-none sm:-mr-3 sm:w-[96px] lg:w-[110px]"
-          sizes="110px"
-        />
         <div
+          id="home-chair"
+          className="relative z-[1] -mr-2 shrink-0 sm:-mr-3"
+        >
+          <Image
+            src="/art/pixel-chair.png"
+            alt=""
+            width={1024}
+            height={1024}
+            className="pixel w-[72px] max-w-none select-none sm:w-[96px] lg:w-[110px]"
+            sizes="110px"
+          />
+          <span
+            id="home-chair-seat"
+            className="absolute left-[18%] right-[20%] top-[46%] h-px"
+          />
+        </div>
+        <div
+          id="home-rock"
+          className="relative z-[2] -mr-2 mb-px shrink-0 sm:-mr-3"
+        >
+          <PixelRock
+            width={52}
+            height={30}
+            className="w-[52px] sm:w-[60px] lg:w-[66px]"
+          />
+        </div>
+        <div
+          id="home-tree"
           className="home-tree"
           style={
             treeH != null && treeW != null
@@ -87,9 +107,8 @@ export function HomeGround() {
       <div
         className="home-flowers pointer-events-none fixed z-[2] flex items-end gap-2 sm:gap-4"
         style={{
-          left: "clamp(1.75rem, 8vw, 4rem)",
+          left: "var(--site-left)",
           bottom: bottom ?? "var(--site-footer-h)",
-          width: "33.333vw",
         }}
         aria-hidden
       >

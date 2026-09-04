@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { PixelBee } from "@/components/PixelArt";
 import { CritterBubble } from "@/components/CritterBubble";
-import { getGeckoPose, onCritterChat, tryStartDuet } from "@/components/critterChat";
+import { getGeckoPose, onCritterChat, pickPerchQuip, tryStartDuet } from "@/components/critterChat";
 
 type Point = { x: number; y: number };
 type Dash = { id: number; x: number; y: number; angle: number };
@@ -144,22 +144,44 @@ export function WanderingBee() {
       };
     };
 
-    type TargetKind = "wander" | "hive" | "chat" | "duet";
+    type TargetKind = "wander" | "hive" | "chat" | "duet" | "chair" | "tree";
 
     let legsSinceChat = 99;
 
     const geckoMeet = (): Point => {
       const pose = getGeckoPose();
-      if (pose.side === "bottom") {
+      if (pose.side === "bottom" || pose.side === "chair" || pose.side === "rock") {
         return { x: pose.x - BEE_W / 2 - 36, y: pose.y - GECKO_ROOM - BEE_H };
       }
-      if (pose.side === "right") {
+      if (pose.side === "right" || pose.side === "tree") {
         return { x: pose.x - BEE_W - 44, y: pose.y - BEE_H / 2 };
       }
       if (pose.side === "left") {
         return { x: pose.x + 36, y: pose.y - BEE_H / 2 };
       }
       return { x: pose.x - BEE_W / 2 - 48, y: pose.y + 28 };
+    };
+
+    const chairSpot = (): Point | null => {
+      const seat = document.getElementById("home-chair-seat");
+      if (!seat) return null;
+      const r = seat.getBoundingClientRect();
+      if (r.width < 4) return null;
+      return {
+        x: r.left + r.width / 2 - BEE_W / 2,
+        y: r.top - BEE_H - 6,
+      };
+    };
+
+    const treeSpot = (): Point | null => {
+      const tree = document.getElementById("home-tree");
+      if (!tree) return null;
+      const r = tree.getBoundingClientRect();
+      if (r.width < 8) return null;
+      return {
+        x: r.left - BEE_W - 6,
+        y: r.top + r.height * 0.32,
+      };
     };
 
     const pickTarget = (
@@ -173,6 +195,10 @@ export function WanderingBee() {
       if (legsSinceChat >= 8 && roll < 0.08) {
         return { point: centerSpot(), kind: "chat" };
       }
+      const chair = chairSpot();
+      if (chair && roll < 0.12) return { point: chair, kind: "chair" };
+      const tree = treeSpot();
+      if (tree && roll < 0.18) return { point: tree, kind: "tree" };
       if (allowHive && roll < 0.28) return { point: hive(), kind: "hive" };
       let next = randomSpot();
       let tries = 0;
@@ -269,6 +295,16 @@ export function WanderingBee() {
             setQuip(null);
             loop();
           }, rand(3000, 5000));
+          return;
+        }
+
+        if (kind === "chair" || kind === "tree") {
+          setQuip(pickPerchQuip("bee", kind));
+          timeoutRef.current = setTimeout(() => {
+            if (cancelled) return;
+            setQuip(null);
+            loop();
+          }, rand(2800, 4600));
           return;
         }
 

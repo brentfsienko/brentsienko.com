@@ -109,7 +109,7 @@ function QuoteBanner() {
           </span>
         </div>
       ) : (
-        <p className="truncate text-xs text-ink-soft">{QUOTE}</p>
+        <p className="text-center text-xs text-ink-soft">{QUOTE}</p>
       )}
     </div>
   );

@@ -81,7 +81,7 @@ export const DUETS: [ChatLine, ChatLine][] = [
   ],
 ];
 
-export type GeckoSide = "top" | "right" | "bottom" | "left";
+export type GeckoSide = "top" | "right" | "bottom" | "left" | "tree" | "chair" | "rock";
 
 let geckoPose = { x: 80, y: 56, side: "top" as GeckoSide };
 let chatLock = false;
@@ -111,6 +111,58 @@ function emit(line: ChatLine) {
 
 export function pickGeckoQuip() {
   return GECKO_QUIPS[Math.floor(Math.random() * GECKO_QUIPS.length)] ?? "sss";
+}
+
+export const CHAIR_QUIPS: Record<Critter, string[]> = {
+  gecko: [
+    "this chair gets it. warm. still. mine now.",
+    "I would like to formally move in.",
+    "finally, a rock with a backrest.",
+    "don't get up. I live here now.",
+    "ergonomic? I don't know that word. I know nap.",
+  ],
+  bee: [
+    "ok this chair is a whole vibe.",
+    "nectar can wait. this seat cannot.",
+    "I like this chair. don't tell the hive I sat.",
+    "six legs, one cushion. generous.",
+  ],
+};
+
+export const TREE_QUIPS: Record<Critter, string[]> = {
+  gecko: [
+    "this bark has excellent grip. five stars.",
+    "a vertical nap. ambitious.",
+    "the tree doesn't rush. I'm practicing.",
+    "sticky toes, better real estate.",
+    "I climbed it because it was there. and warm.",
+  ],
+  bee: [
+    "I like this tree. don't tell the flowers.",
+    "the tree smells like a good year.",
+    "leaves, shade, and nobody asking me to pollinate immediately.",
+    "hug a tree. they hold centuries. also me, briefly.",
+  ],
+};
+
+export const ROCK_QUIPS = [
+  "sun on a rock. that's the whole plan.",
+  "this rock was made for a belly.",
+  "do not disturb. ectothermic meeting in progress.",
+  "my love language is a warm stone. this one.",
+];
+
+export function pickPerchQuip(
+  who: Critter,
+  perch: "chair" | "tree" | "rock",
+) {
+  const list =
+    perch === "chair"
+      ? CHAIR_QUIPS[who]
+      : perch === "tree"
+        ? TREE_QUIPS[who]
+        : ROCK_QUIPS;
+  return list[Math.floor(Math.random() * list.length)] ?? "sss";
 }
 
 export function tryStartDuet() {
