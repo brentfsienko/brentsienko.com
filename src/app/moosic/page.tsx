@@ -57,11 +57,20 @@ function MonthlyPickRow({
 export default async function RadioPage() {
   const { current, past, currentLabel } = splitRadioHistory();
 
-  const [topTracks, topArtists, songImage, albumImage] = await Promise.all([
+  const [topTracks, topArtists, songImage, albumImage, pastMonths] = await Promise.all([
     getTopTracks(3),
     getTopArtists(3),
     current ? getTrackImage(current.song.spotifyId) : Promise.resolve(null),
     current ? getAlbumImage(current.album.spotifyId) : Promise.resolve(null),
+    Promise.all(
+      past.map(async (month) => {
+        const [songArt, albumArt] = await Promise.all([
+          getTrackImage(month.song.spotifyId),
+          getAlbumImage(month.album.spotifyId),
+        ]);
+        return { ...month, songImage: songArt, albumImage: albumArt };
+      }),
+    ),
   ]);
 
   const hasTopData = topTracks.length > 0 || topArtists.length > 0;
@@ -186,13 +195,13 @@ export default async function RadioPage() {
         )}
       </section>
 
-      {past.length > 0 && (
+      {pastMonths.length > 0 && (
         <section>
           <h2 className="mb-4 text-xs uppercase tracking-widest text-ink-faint">
             past months
           </h2>
           <ul className="divide-y divide-ink border-y border-ink">
-            {past.map((month) => (
+            {pastMonths.map((month) => (
               <li key={month.monthLabel} className="py-4">
                 <p className="mb-3 text-xs text-ink-faint">{month.monthLabel}</p>
                 <div className="grid gap-1 sm:grid-cols-2">
@@ -201,12 +210,14 @@ export default async function RadioPage() {
                     title={month.song.title}
                     artist={month.song.artist}
                     spotifyUrl={month.song.spotifyUrl}
+                    imageUrl={month.songImage}
                   />
                   <MonthlyPickRow
                     label="favorite album"
                     title={month.album.title}
                     artist={month.album.artist}
                     spotifyUrl={month.album.spotifyUrl}
+                    imageUrl={month.albumImage}
                   />
                 </div>
               </li>
