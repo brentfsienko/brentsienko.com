@@ -564,7 +564,9 @@ export function PixelRock({ className = "", width = 64, height = 22 }: Props) {
   );
 }
 
-type WalkGeckoProps = Props & { step?: 0 | 1 };
+type WalkGeckoProps = Props & { step?: 0 | 1; loaf?: boolean };
+
+type GeckoCell = readonly [x: number, y: number, w: number, h: number, fill: string];
 
 /** Compact gecko for the header rule. Head faces right. Two clear leg pairs, feet on the line. */
 export function PixelLineGecko({
@@ -572,6 +574,7 @@ export function PixelLineGecko({
   width = 58,
   height = 24,
   step = 0,
+  loaf = false,
 }: WalkGeckoProps) {
   const G = "#3d9a60";
   const G2 = "#4cb574";
@@ -579,23 +582,74 @@ export function PixelLineGecko({
   const G4 = "#1e4f30";
   const eye = "#d7ef9a";
 
-  const hindNearX = step === 0 ? 6 : 11;
-  const hindFarX = step === 0 ? 12 : 7;
-  const frontFarX = step === 0 ? 19 : 24;
-  const frontNearX = step === 0 ? 25 : 20;
-
-  const farLeg = (footX: number) =>
+  const farLeg = (footX: number): GeckoCell[] =>
     [
       [footX + 1, 10, 3, 2, G4],
       [footX + 1, 12, 2, 3, G4],
       [footX, 15, 4, 2, G3],
-    ] as const;
-  const nearLeg = (footX: number) =>
+    ];
+  const nearLeg = (footX: number): GeckoCell[] =>
     [
       [footX + 1, 11, 3, 2, G3],
       [footX + 1, 13, 2, 2, G3],
       [footX, 15, 5, 2, G4],
-    ] as const;
+    ];
+
+  const walkCells: GeckoCell[] = loaf
+    ? []
+    : [
+        ...farLeg(step === 0 ? 12 : 7),
+        ...farLeg(step === 0 ? 19 : 24),
+        [0, 6, 2, 2, G4],
+        [2, 7, 3, 2, G],
+        [5, 8, 3, 2, G2],
+        [8, 7, 16, 4, G],
+        [10, 6, 12, 2, G2],
+        [9, 10, 14, 1, G3],
+        [23, 6, 4, 5, G],
+        [26, 4, 7, 7, G],
+        [27, 3, 5, 2, G2],
+        [28, 5, 5, 5, eye],
+        [29, 6, 3, 3, "#1a1a1a"],
+        [31, 6, 1, 1, "#f4f2ec"],
+        [32, 7, 2, 3, G2],
+        [33, 8, 2, 2, G],
+        [34, 8, 1, 1, G4],
+        [27, 10, 6, 1, G4],
+        [28, 11, 4, 1, G3],
+        ...nearLeg(step === 0 ? 6 : 11),
+        ...nearLeg(step === 0 ? 25 : 20),
+      ];
+
+  /** Belly on the line: legs kicked out, chin down, same big eye. */
+  const loafCells: GeckoCell[] = [
+    [1, 14, 3, 2, G4],
+    [0, 15, 6, 2, G3],
+    [24, 14, 3, 2, G4],
+    [25, 15, 6, 2, G3],
+    [0, 13, 2, 2, G4],
+    [2, 14, 4, 2, G],
+    [5, 13, 5, 3, G2],
+    [8, 12, 18, 4, G],
+    [10, 11, 14, 2, G2],
+    [8, 15, 18, 2, G3],
+    [25, 11, 4, 5, G],
+    [28, 9, 8, 7, G],
+    [29, 8, 6, 2, G2],
+    [30, 10, 5, 5, eye],
+    [31, 11, 3, 3, "#1a1a1a"],
+    [33, 11, 1, 1, "#f4f2ec"],
+    [34, 12, 3, 3, G2],
+    [35, 13, 3, 2, G],
+    [37, 13, 1, 1, G4],
+    [29, 15, 9, 2, G4],
+    [6, 14, 6, 2, G3],
+    [5, 15, 7, 2, G4],
+    [20, 14, 6, 2, G3],
+    [21, 15, 8, 2, G4],
+  ];
+
+  const cells = loaf ? loafCells : walkCells;
 
   return (
     <svg
@@ -606,37 +660,8 @@ export function PixelLineGecko({
       shapeRendering="crispEdges"
       aria-hidden
     >
-      {farLeg(hindFarX).map(([x, y, w, h, fill], i) => (
-        <rect key={`fh${i}`} x={x} y={y} width={w} height={h} fill={fill} />
-      ))}
-      {farLeg(frontFarX).map(([x, y, w, h, fill], i) => (
-        <rect key={`ff${i}`} x={x} y={y} width={w} height={h} fill={fill} />
-      ))}
-      {/* tail */}
-      <rect x="0" y="6" width="2" height="2" fill={G4} />
-      <rect x="2" y="7" width="3" height="2" fill={G} />
-      <rect x="5" y="8" width="3" height="2" fill={G2} />
-      {/* body */}
-      <rect x="8" y="7" width="16" height="4" fill={G} />
-      <rect x="10" y="6" width="12" height="2" fill={G2} />
-      <rect x="9" y="10" width="14" height="1" fill={G3} />
-      {/* gecko head: bulbous skull, huge eye, short rounded snout */}
-      <rect x="23" y="6" width="4" height="5" fill={G} />
-      <rect x="26" y="4" width="7" height="7" fill={G} />
-      <rect x="27" y="3" width="5" height="2" fill={G2} />
-      <rect x="28" y="5" width="5" height="5" fill={eye} />
-      <rect x="29" y="6" width="3" height="3" fill="#1a1a1a" />
-      <rect x="31" y="6" width="1" height="1" fill="#f4f2ec" />
-      <rect x="32" y="7" width="2" height="3" fill={G2} />
-      <rect x="33" y="8" width="2" height="2" fill={G} />
-      <rect x="34" y="8" width="1" height="1" fill={G4} />
-      <rect x="27" y="10" width="6" height="1" fill={G4} />
-      <rect x="28" y="11" width="4" height="1" fill={G3} />
-      {nearLeg(hindNearX).map(([x, y, w, h, fill], i) => (
-        <rect key={`nh${i}`} x={x} y={y} width={w} height={h} fill={fill} />
-      ))}
-      {nearLeg(frontNearX).map(([x, y, w, h, fill], i) => (
-        <rect key={`nf${i}`} x={x} y={y} width={w} height={h} fill={fill} />
+      {cells.map(([x, y, w, h, fill], i) => (
+        <rect key={i} x={x} y={y} width={w} height={h} fill={fill} />
       ))}
     </svg>
   );

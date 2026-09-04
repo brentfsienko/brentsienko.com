@@ -234,6 +234,7 @@ export function LineGecko() {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const quipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const walkingRef = useRef(true);
+  const [loafing, setLoafing] = useState(false);
   const progressRef = useRef(0.5);
   const spriteRef = useRef<HTMLDivElement>(null);
   const [spriteBox, setSpriteBox] = useState<Box | null>(null);
@@ -287,12 +288,17 @@ export function LineGecko() {
       quipTimeoutRef.current = setTimeout(() => setQuip(null), ms);
     };
 
+    const setWalking = (walk: boolean) => {
+      walkingRef.current = walk;
+      setLoafing(!walk);
+    };
+
     const stopChat = onCritterChat((line) => {
       if (line.from !== "gecko") {
-        walkingRef.current = false;
+        setWalking(false);
         return;
       }
-      walkingRef.current = false;
+      setWalking(false);
       showQuip(line.text, 3400);
     });
 
@@ -339,7 +345,7 @@ export function LineGecko() {
         alongRef.current = Math.min(max, Math.max(min, alongRef.current));
       }
       setAlong(alongRef.current);
-      walkingRef.current = false;
+      setWalking(false);
       progressRef.current = progressFromAlong(next, alongRef.current, s);
       showQuip(pickPerchQuip("gecko", next), rand(2800, 4400));
       publish();
@@ -417,7 +423,7 @@ export function LineGecko() {
     const schedule = () => {
       if (cancelled) return;
       if (isChatBusy()) {
-        walkingRef.current = false;
+        setWalking(false);
         timeoutRef.current = setTimeout(schedule, rand(800, 1400));
         return;
       }
@@ -428,7 +434,7 @@ export function LineGecko() {
 
       if (here === "chair" || here === "rock") {
         if (roll < 0.55) {
-          walkingRef.current = false;
+          setWalking(false);
           if (roll < 0.18) {
             showQuip(pickPerchQuip("gecko", here), rand(2600, 4000));
           }
@@ -442,7 +448,7 @@ export function LineGecko() {
         setSide(turned.side);
         setDir(turned.dir);
         setAlong(turned.along);
-        walkingRef.current = true;
+        setWalking(true);
         progressRef.current = progressFromAlong(turned.side, turned.along, s);
         publish();
         timeoutRef.current = setTimeout(schedule, rand(900, 2800));
@@ -451,12 +457,12 @@ export function LineGecko() {
 
       if (here === "tree") {
         if (roll < 0.22) {
-          walkingRef.current = false;
+          setWalking(false);
           showQuip(pickPerchQuip("gecko", "tree"), rand(2600, 4000));
           timeoutRef.current = setTimeout(schedule, rand(2800, 5000));
           return;
         }
-        walkingRef.current = true;
+        setWalking(true);
         if (roll < 0.45) {
           dirRef.current *= -1;
           setDir(dirRef.current);
@@ -467,7 +473,7 @@ export function LineGecko() {
       }
 
       if (roll < 0.16) {
-        walkingRef.current = false;
+        setWalking(false);
         if (roll < 0.02 && tryStartDuet()) {
           timeoutRef.current = setTimeout(schedule, rand(6200, 7600));
           return;
@@ -482,7 +488,7 @@ export function LineGecko() {
         dirRef.current *= -1;
         setDir(dirRef.current);
       }
-      walkingRef.current = true;
+      setWalking(true);
       speed = rand(16, 30);
       timeoutRef.current = setTimeout(schedule, rand(900, 3800));
     };
@@ -503,10 +509,10 @@ export function LineGecko() {
       setDir(dirRef.current);
       progressRef.current = progressFromAlong(start, alongRef.current, s);
       if (start === "chair" || start === "tree" || start === "rock") {
-        walkingRef.current = false;
+        setWalking(false);
         showQuip(pickPerchQuip("gecko", start), rand(2800, 4200));
       } else {
-        walkingRef.current = true;
+        setWalking(true);
       }
       publish();
     };
@@ -552,7 +558,7 @@ export function LineGecko() {
         16,
       ),
     );
-  }, [at.x, at.y, side, dir, step, quip, reducedMotion]);
+  }, [at.x, at.y, side, dir, step, quip, loafing, reducedMotion]);
 
   if (reducedMotion) {
     return (
@@ -591,7 +597,7 @@ export function LineGecko() {
           transformOrigin: "50% 100%",
         }}
       >
-        <PixelLineGecko width={GECKO_W} height={GECKO_H} step={step} />
+        <PixelLineGecko width={GECKO_W} height={GECKO_H} step={step} loaf={loafing} />
       </div>
     </div>
   );
