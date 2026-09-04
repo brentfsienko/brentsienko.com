@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { radioHistory } from "@/data/radio";
+import { splitRadioHistory } from "@/data/radio";
 import { getTopTracks, getTopArtists, getTrackImage, getAlbumImage } from "@/lib/spotify";
 import { NowPlaying } from "./NowPlaying";
 
@@ -55,14 +55,13 @@ function MonthlyPickRow({
 }
 
 export default async function RadioPage() {
-  const current = radioHistory[0]!;
-  const archive = radioHistory.slice(1);
+  const { current, past, currentLabel } = splitRadioHistory();
 
   const [topTracks, topArtists, songImage, albumImage] = await Promise.all([
     getTopTracks(3),
     getTopArtists(3),
-    getTrackImage(current.song.spotifyId),
-    getAlbumImage(current.album.spotifyId),
+    current ? getTrackImage(current.song.spotifyId) : Promise.resolve(null),
+    current ? getAlbumImage(current.album.spotifyId) : Promise.resolve(null),
   ]);
 
   const hasTopData = topTracks.length > 0 || topArtists.length > 0;
@@ -153,42 +152,49 @@ export default async function RadioPage() {
         </section>
       )}
 
-      {/* This month — song LEFT | album RIGHT */}
+      {/* This month — song LEFT | album RIGHT. Blank until this month's picks land. */}
       <section className="mb-14">
         <div className="mb-3 flex items-baseline gap-2">
           <h2 className="text-xs uppercase tracking-widest text-ink-faint">this month</h2>
-          <span className="text-xs text-ink-faint">{current.monthLabel}</span>
+          <span className="text-xs text-ink-faint">{currentLabel}</span>
         </div>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <MonthlyPickRow
-            label="favorite song"
-            title={current.song.title}
-            artist={current.song.artist}
-            note={current.song.note}
-            spotifyUrl={current.song.spotifyUrl}
-            imageUrl={songImage}
-          />
-          <MonthlyPickRow
-            label="favorite album"
-            title={current.album.title}
-            artist={current.album.artist}
-            note={current.album.note}
-            spotifyUrl={current.album.spotifyUrl}
-            imageUrl={albumImage}
-          />
-        </div>
+        {current ? (
+          <div className="grid gap-2 sm:grid-cols-2">
+            <MonthlyPickRow
+              label="favorite song"
+              title={current.song.title}
+              artist={current.song.artist}
+              note={current.song.note}
+              spotifyUrl={current.song.spotifyUrl}
+              imageUrl={songImage}
+            />
+            <MonthlyPickRow
+              label="favorite album"
+              title={current.album.title}
+              artist={current.album.artist}
+              note={current.album.note}
+              spotifyUrl={current.album.spotifyUrl}
+              imageUrl={albumImage}
+            />
+          </div>
+        ) : (
+          <div className="border-2 border-dashed border-ink-faint p-6">
+            <p className="text-sm text-ink-soft">
+              no picks yet this month — check back soon.
+            </p>
+          </div>
+        )}
       </section>
 
-      {/* Archive */}
-      {archive.length > 0 && (
+      {past.length > 0 && (
         <section>
-          <h2 className="mb-4 text-xs uppercase tracking-widest text-ink-faint">archive</h2>
+          <h2 className="mb-4 text-xs uppercase tracking-widest text-ink-faint">
+            past months
+          </h2>
           <ul className="divide-y divide-ink border-y border-ink">
-            {archive.map((month) => (
+            {past.map((month) => (
               <li key={month.monthLabel} className="py-4">
-                <p className="mb-3 text-xs uppercase tracking-widest text-ink-faint">
-                  {month.monthLabel}
-                </p>
+                <p className="mb-3 text-xs text-ink-faint">{month.monthLabel}</p>
                 <div className="grid gap-1 sm:grid-cols-2">
                   <MonthlyPickRow
                     label="favorite song"

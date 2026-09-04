@@ -16,7 +16,8 @@ export type RadioData = {
 
 /**
  * Monthly picks — newest first.
- * Add a new entry at the top each month; past entries become the archive.
+ * Add an entry when this month's picks are ready. Until then the page
+ * leaves "this month" blank. Older months drop into the past list on their own.
  */
 export const radioHistory: RadioData[] = [
   {
@@ -36,5 +37,30 @@ export const radioHistory: RadioData[] = [
   },
 ];
 
-/** Convenience alias — always the current month. */
-export const radioData: RadioData = radioHistory[0]!;
+const TZ = "America/Los_Angeles";
+
+export function currentMonthLabel(now = new Date()) {
+  return now.toLocaleString("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: TZ,
+  });
+}
+
+function monthKey(label: string) {
+  const t = Date.parse(`${label} 1`);
+  return Number.isNaN(t) ? 0 : t;
+}
+
+export function splitRadioHistory(
+  history = radioHistory,
+  now = new Date(),
+) {
+  const currentLabel = currentMonthLabel(now);
+  const nowKey = monthKey(currentLabel);
+  const current = history.find((m) => monthKey(m.monthLabel) === nowKey) ?? null;
+  const past = history
+    .filter((m) => monthKey(m.monthLabel) < nowKey)
+    .sort((a, b) => monthKey(b.monthLabel) - monthKey(a.monthLabel));
+  return { current, past, currentLabel };
+}
