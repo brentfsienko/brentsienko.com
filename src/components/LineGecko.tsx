@@ -40,7 +40,7 @@ function readRect(id: string): Rect | null {
   const el = document.getElementById(id);
   if (!el) return null;
   const r = el.getBoundingClientRect();
-  if (r.width < 4 || r.height < 1) return null;
+  if (r.width < 4) return null;
   return {
     left: r.left,
     top: r.top,
@@ -155,7 +155,7 @@ function availableSides(s: Scene): GeckoSide[] {
   return sides;
 }
 
-function feet(side: GeckoSide, along: number, s: Scene) {
+function feet(side: GeckoSide, along: number, s: Scene, loafing = false) {
   if (side === "top") return { x: along, y: s.top };
   if (side === "bottom") return { x: along, y: s.bottom };
   if (side === "right") return { x: s.w - 2, y: along };
@@ -170,10 +170,8 @@ function feet(side: GeckoSide, along: number, s: Scene) {
     const seatY = s.seat?.top ?? (s.chair ? s.chair.top + s.chair.height * 0.46 : s.bottom - 36);
     return { x: along, y: seatY };
   }
-  return {
-    x: along,
-    y: s.rockTop?.top ?? (s.rock?.top ?? s.bottom - 18) + 4,
-  };
+  const surface = s.rockTop?.top ?? (s.rock?.top ?? s.bottom - 18) + 2;
+  return { x: along, y: surface + (loafing ? 3 : 1) };
 }
 
 function wallTransform(side: GeckoSide, dir: number) {
@@ -247,7 +245,7 @@ export function LineGecko() {
       setMetrics(s);
       setAlong(alongRef.current);
       setGeckoPose({
-        ...feet(sideRef.current, alongRef.current, s),
+        ...feet(sideRef.current, alongRef.current, s, !walkingRef.current),
         side: sideRef.current,
       });
     };
@@ -278,7 +276,7 @@ export function LineGecko() {
 
     const publish = () => {
       const m = metricsRef.current;
-      const at = feet(sideRef.current, alongRef.current, m);
+      const at = feet(sideRef.current, alongRef.current, m, !walkingRef.current);
       setGeckoPose({ ...at, side: sideRef.current });
     };
 
@@ -543,7 +541,7 @@ export function LineGecko() {
     };
   }, [reducedMotion]);
 
-  const at = feet(side, along, metrics);
+  const at = feet(side, along, metrics, loafing);
   const layer = side === "top" ? 19 : 32;
 
   useLayoutEffect(() => {

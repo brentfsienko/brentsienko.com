@@ -88,7 +88,7 @@ export function HomeGround() {
           />
           <span
             id="home-rock-top"
-            className="absolute left-[12%] right-[12%] top-[22%] h-px"
+            className="absolute left-[3%] right-[3%] top-[8.33%] h-px"
           />
         </div>
         <div

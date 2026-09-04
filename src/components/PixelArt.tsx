@@ -541,7 +541,7 @@ export function PixelGecko({ className = "", width = 72, height = 48 }: Props) {
   );
 }
 
-/** A sun-warmed rock for the gecko to loaf on. Flat top, low loaf. */
+/** A sun-warmed rock for the gecko to loaf on. Wide flat top, low loaf. */
 export function PixelRock({ className = "", width = 64, height = 22 }: Props) {
   return (
     <svg
@@ -549,17 +549,18 @@ export function PixelRock({ className = "", width = 64, height = 22 }: Props) {
       width={width}
       height={height}
       viewBox="0 0 32 12"
+      preserveAspectRatio="xMidYMin meet"
       shapeRendering="crispEdges"
       aria-hidden
     >
-      <rect x="6" y="2" width="20" height="2" fill="#9a9a9a" />
-      <rect x="4" y="3" width="24" height="2" fill="#8a8a8a" />
-      <rect x="3" y="5" width="26" height="3" fill="#6b6b6b" />
-      <rect x="2" y="8" width="28" height="2" fill="#5a5a5a" />
-      <rect x="4" y="10" width="24" height="2" fill="#4a4a4a" />
-      <rect x="3" y="8" width="3" height="2" fill="#3f3f3f" />
-      <rect x="26" y="8" width="3" height="2" fill="#3f3f3f" />
-      <rect x="8" y="3" width="5" height="2" fill="#b0b0b0" />
+      <rect x="2" y="1" width="28" height="2" fill="#c4c4c4" />
+      <rect x="1" y="2" width="30" height="3" fill="#9a9a9a" />
+      <rect x="8" y="2" width="7" height="2" fill="#d8d8d8" />
+      <rect x="0" y="5" width="32" height="3" fill="#6b6b6b" />
+      <rect x="1" y="8" width="30" height="2" fill="#5a5a5a" />
+      <rect x="2" y="10" width="28" height="2" fill="#4a4a4a" />
+      <rect x="0" y="7" width="3" height="2" fill="#3f3f3f" />
+      <rect x="29" y="7" width="3" height="2" fill="#3f3f3f" />
     </svg>
   );
 }
@@ -657,6 +658,7 @@ export function PixelLineGecko({
       width={width}
       height={height}
       viewBox="0 0 42 17"
+      preserveAspectRatio="xMidYMax meet"
       shapeRendering="crispEdges"
       aria-hidden
     >
