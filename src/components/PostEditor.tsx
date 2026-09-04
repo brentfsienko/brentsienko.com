@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import { BlogMarkdown } from "@/components/BlogMarkdown";
 import {
   deletePostAction,
   savePostAction,
@@ -87,6 +88,8 @@ export function PostEditor({ post }: Props) {
   const [slug, setSlug] = useState(post?.slug ?? "");
   const [slugTouched, setSlugTouched] = useState(Boolean(post?.slug));
   const [body, setBody] = useState(post?.body ?? "");
+  const [summary, setSummary] = useState(post?.summary ?? "");
+  const [mode, setMode] = useState<"write" | "preview">("write");
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [pendingPhotos, setPendingPhotos] = useState<PendingPhoto[]>([]);
@@ -213,37 +216,53 @@ export function PostEditor({ post }: Props) {
           <input
             name="summary"
             className="field mt-2"
-            defaultValue={post?.summary ?? ""}
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
           />
         </label>
 
         <div>
-          <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-            <span className="text-xs uppercase tracking-widest text-ink-faint">
-              body (markdown)
-            </span>
-            <label
-              className={`btn !px-3 !py-1 !text-xs ${uploading ? "pointer-events-none opacity-60" : ""}`}
-            >
-              {uploading ? "uploading…" : "add photo"}
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                className="sr-only"
-                disabled={uploading}
-                onChange={(e) => {
-                  const list = e.target.files;
-                  if (list?.length) void addPhotos(Array.from(list));
-                  e.target.value = "";
-                }}
-              />
-            </label>
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-baseline gap-3">
+              <button
+                type="button"
+                onClick={() => setMode("write")}
+                className={`cursor-pointer text-xs uppercase tracking-widest ${mode === "write" ? "text-ink underline" : "text-ink-faint"}`}
+              >
+                write
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("preview")}
+                className={`cursor-pointer text-xs uppercase tracking-widest ${mode === "preview" ? "text-ink underline" : "text-ink-faint"}`}
+              >
+                preview
+              </button>
+            </div>
+            {mode === "write" && (
+              <label
+                className={`btn !px-3 !py-1 !text-xs ${uploading ? "pointer-events-none opacity-60" : ""}`}
+              >
+                {uploading ? "uploading…" : "add photo"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="sr-only"
+                  disabled={uploading}
+                  onChange={(e) => {
+                    const list = e.target.files;
+                    if (list?.length) void addPhotos(Array.from(list));
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            )}
           </div>
           <textarea
             ref={bodyRef}
             name="body"
-            className="field min-h-[280px] font-mono text-sm leading-relaxed"
+            className={`field min-h-[280px] font-mono text-sm leading-relaxed ${mode === "preview" ? "hidden" : ""}`}
             value={body}
             required
             onChange={(e) => setBody(e.target.value)}
@@ -267,7 +286,30 @@ export function PostEditor({ post }: Props) {
               }
             }}
           />
-          {(savedPhotos.length > 0 || pendingPhotos.length > 0) && (
+          {mode === "preview" && (
+            <article className="border-2 border-ink bg-paper p-5 sm:p-6">
+              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                {title.trim() || "untitled"}
+              </h1>
+              <p className="mt-3 text-xs text-ink-faint">
+                {new Date(post?.published_at ?? Date.now()).toLocaleDateString(
+                  "en-US",
+                  {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  },
+                )}
+              </p>
+              {summary.trim() ? (
+                <p className="mt-4 text-sm text-ink-soft">{summary.trim()}</p>
+              ) : null}
+              <div className="mt-8">
+                <BlogMarkdown body={body} empty="nothing to preview yet." />
+              </div>
+            </article>
+          )}
+          {mode === "write" && (savedPhotos.length > 0 || pendingPhotos.length > 0) && (
             <ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
               {savedPhotos.map((photo) => (
                 <li key={photo.url}>
@@ -294,9 +336,11 @@ export function PostEditor({ post }: Props) {
               ))}
             </ul>
           )}
-          <p className="mt-1.5 text-xs text-ink-faint">
-            add photo, or drop / paste one into the body. save the post after.
-          </p>
+          {mode === "write" && (
+            <p className="mt-1.5 text-xs text-ink-faint">
+              add photo, or drop / paste one into the body. save the post after.
+            </p>
+          )}
           {uploadError && <p className="mt-1 text-sm text-flower">{uploadError}</p>}
         </div>
 

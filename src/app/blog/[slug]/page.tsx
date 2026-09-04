@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { getPublishedPost } from "@/lib/posts";
+import { BlogMarkdown } from "@/components/BlogMarkdown";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -38,19 +37,8 @@ export default async function BlogPostPage({ params }: Props) {
           })}
         </p>
       )}
-      <div className="prose-sketch mt-8">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            img: ({ src, alt }) =>
-              typeof src === "string" ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={src} alt={alt ?? ""} className="blog-photo" />
-              ) : null,
-          }}
-        >
-          {post.body}
-        </ReactMarkdown>
+      <div className="mt-8">
+        <BlogMarkdown body={post.body} />
       </div>
     </article>
   );
