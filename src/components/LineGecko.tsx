@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { PixelLineGecko } from "@/components/PixelArt";
 import { CritterBubble } from "@/components/CritterBubble";
 import type { Placement } from "@/components/speechBubble";
+import { padBox, type Box } from "@/components/speechBubble";
 import {
   isChatBusy,
   onCritterChat,
@@ -234,6 +235,8 @@ export function LineGecko() {
   const quipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const walkingRef = useRef(true);
   const progressRef = useRef(0.5);
+  const spriteRef = useRef<HTMLDivElement>(null);
+  const [spriteBox, setSpriteBox] = useState<Box | null>(null);
 
   useEffect(() => {
     const apply = () => {
@@ -534,6 +537,23 @@ export function LineGecko() {
     };
   }, [reducedMotion]);
 
+  const at = feet(side, along, metrics);
+  const layer = side === "top" ? 19 : 32;
+
+  useLayoutEffect(() => {
+    if (reducedMotion) return;
+    const el = spriteRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    if (r.width < 4 || r.height < 4) return;
+    setSpriteBox(
+      padBox(
+        { left: r.left, top: r.top, right: r.right, bottom: r.bottom },
+        16,
+      ),
+    );
+  }, [at.x, at.y, side, dir, step, quip, reducedMotion]);
+
   if (reducedMotion) {
     return (
       <div
@@ -546,23 +566,22 @@ export function LineGecko() {
     );
   }
 
-  const at = feet(side, along, metrics);
-  const layer = side === "top" ? 19 : 32;
-
   return (
     <div
       className="pointer-events-none fixed"
-      style={{ left: at.x, top: at.y, width: 0, height: 0, zIndex: layer }}
+      style={{ left: at.x, top: at.y, width: 0, height: 0, zIndex: quip ? 52 : layer }}
       aria-hidden
     >
       {quip ? (
         <CritterBubble
           who="gecko"
           text={quip}
+          keepClear={spriteBox}
           {...geckoBubble(side, at)}
         />
       ) : null}
       <div
+        ref={spriteRef}
         style={{
           width: GECKO_W,
           height: GECKO_H,

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { PixelBee } from "@/components/PixelArt";
 import { CritterBubble } from "@/components/CritterBubble";
-import { getGeckoPose, onCritterChat, pickPerchQuip, tryStartDuet } from "@/components/critterChat";
+import { getGeckoPose, onCritterChat, pickBeeQuip, pickPerchQuip, tryStartDuet } from "@/components/critterChat";
 import {
   isBehindOrInTree,
   readTreeBox,
@@ -20,35 +20,8 @@ const DASH_GAP = 12;
 const TRAIL_MS = 1800;
 const GECKO_ROOM = 28;
 
-const QUIPS = [
-  "leave no trace. take only nectar.",
-  "pack it in, pack it out, pollinate in between",
-  "stay on the trail. the flowers know the way.",
-  "sunrise > alarm clocks",
-  "touch grass. then the clover.",
-  "hydrate. then hydrate the plants.",
-  "trees don't rush. neither should you.",
-  "love is a shared patch of sun",
-  "find someone who looks at you like a bee looks at lavender",
-  "we're all just temporary pollen",
-  "nothing matters. the wildflowers still do.",
-  "the void is big. so is this oak.",
-  "meaning optional. kindness required.",
-  "exist softly. buzz loudly.",
-  "in the end: compost. until then: bees.",
-  "bzzzzz (that's philosophy)",
-  "hug a tree. they hold centuries.",
-  "good outdoor rule #1: look up",
-  "the forest forgives. try it.",
-  "love grows where the light does",
-];
-
 function rand(min: number, max: number) {
   return min + Math.random() * (max - min);
-}
-
-function pickQuip() {
-  return QUIPS[Math.floor(Math.random() * QUIPS.length)] ?? "bzzzzz";
 }
 
 function easeInOut(t: number) {
@@ -327,7 +300,7 @@ export function WanderingBee() {
         }
 
         if (kind === "chat") {
-          setQuip(pickQuip());
+          setQuip(pickBeeQuip());
           timeoutRef.current = setTimeout(() => {
             if (cancelled) return;
             setQuip(null);

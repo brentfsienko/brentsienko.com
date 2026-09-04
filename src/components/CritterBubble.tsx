@@ -6,6 +6,7 @@ import type { Critter } from "@/components/critterChat";
 import {
   boxFrom,
   placeSpeechBubble,
+  type Box,
   type Placement,
 } from "@/components/speechBubble";
 import { getSpeechBox, onSpeechBoxChange, setSpeechBox } from "@/components/critterChat";
@@ -16,9 +17,11 @@ type Props = {
   anchorX: number;
   anchorY: number;
   preferred: Placement;
+  /** Keep the bubble off this box (usually the speaker's sprite). */
+  keepClear?: Box | null;
 };
 
-export function CritterBubble({ who, text, anchorX, anchorY, preferred }: Props) {
+export function CritterBubble({ who, text, anchorX, anchorY, preferred, keepClear }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const [pos, setPos] = useState({ left: 0, top: 0, placement: preferred });
@@ -36,7 +39,8 @@ export function CritterBubble({ who, text, anchorX, anchorY, preferred }: Props)
       if (!el) return;
       const width = el.offsetWidth;
       const height = el.offsetHeight;
-      const avoid = who === "bee" ? getSpeechBox("gecko") : null;
+      const other = who === "bee" ? getSpeechBox("gecko") : getSpeechBox("bee");
+      const avoid = [keepClear, other].filter((box): box is Box => box != null);
       const next = placeSpeechBubble({
         anchorX,
         anchorY,
@@ -62,7 +66,7 @@ export function CritterBubble({ who, text, anchorX, anchorY, preferred }: Props)
       window.removeEventListener("resize", layout);
       setSpeechBox(who, null);
     };
-  }, [who, text, anchorX, anchorY, preferred, mounted]);
+  }, [who, text, anchorX, anchorY, preferred, keepClear, mounted]);
 
   if (!mounted) return null;
 
