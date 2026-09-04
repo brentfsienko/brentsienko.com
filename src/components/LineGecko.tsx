@@ -94,6 +94,18 @@ function bounds(side: GeckoSide, s: Scene) {
   return { min: HALF_W, max: Math.max(HALF_W + 8, s.w - HALF_W) };
 }
 
+function progressFromAlong(side: GeckoSide, along: number, s: Scene) {
+  const { min, max } = bounds(side, s);
+  const span = max - min;
+  if (span <= 1) return 0.5;
+  return Math.min(1, Math.max(0, (along - min) / span));
+}
+
+function alongFromProgress(side: GeckoSide, t: number, s: Scene) {
+  const { min, max } = bounds(side, s);
+  return min + Math.min(1, Math.max(0, t)) * Math.max(0, max - min);
+}
+
 function turnCorner(
   side: GeckoSide,
   dir: number,
@@ -221,16 +233,32 @@ export function LineGecko() {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const quipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const walkingRef = useRef(true);
+  const progressRef = useRef(0.5);
 
   useEffect(() => {
     const apply = () => {
       const s = scene();
       metricsRef.current = s;
+      alongRef.current = alongFromProgress(sideRef.current, progressRef.current, s);
       setMetrics(s);
+      setAlong(alongRef.current);
+      setGeckoPose({
+        ...feet(sideRef.current, alongRef.current, s),
+        side: sideRef.current,
+      });
     };
     apply();
     window.addEventListener("resize", apply);
-    return () => window.removeEventListener("resize", apply);
+    window.addEventListener("scroll", apply, { capture: true, passive: true });
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", apply);
+    vv?.addEventListener("scroll", apply);
+    return () => {
+      window.removeEventListener("resize", apply);
+      window.removeEventListener("scroll", apply, { capture: true });
+      vv?.removeEventListener("resize", apply);
+      vv?.removeEventListener("scroll", apply);
+    };
   }, []);
 
   useEffect(() => {
@@ -273,7 +301,6 @@ export function LineGecko() {
     const applyMetrics = () => {
       const s = scene();
       metricsRef.current = s;
-      setMetrics(s);
       const here = sideRef.current;
       if (
         (here === "tree" && !s.tree) ||
@@ -282,9 +309,14 @@ export function LineGecko() {
       ) {
         sideRef.current = "bottom";
         setSide("bottom");
+        progressRef.current = 0.5;
       }
-      const { min, max } = bounds(sideRef.current, s);
-      alongRef.current = Math.min(max, Math.max(min, alongRef.current));
+      alongRef.current = alongFromProgress(
+        sideRef.current,
+        progressRef.current,
+        s,
+      );
+      setMetrics(s);
       setAlong(alongRef.current);
       publish();
     };
@@ -305,6 +337,7 @@ export function LineGecko() {
       }
       setAlong(alongRef.current);
       walkingRef.current = false;
+      progressRef.current = progressFromAlong(next, alongRef.current, s);
       showQuip(pickPerchQuip("gecko", next), rand(2800, 4400));
       publish();
     };
@@ -353,14 +386,27 @@ export function LineGecko() {
         } else {
           alongRef.current = next;
         }
-        setAlong(alongRef.current);
-        publish();
+        progressRef.current = progressFromAlong(
+          sideRef.current,
+          alongRef.current,
+          s,
+        );
         stepAcc += dt;
         if (stepAcc > 0.22) {
           stepAcc = 0;
           setStep((step) => (step === 0 ? 1 : 0));
         }
+      } else {
+        alongRef.current = alongFromProgress(
+          sideRef.current,
+          progressRef.current,
+          s,
+        );
       }
+
+      setMetrics(s);
+      setAlong(alongRef.current);
+      publish();
 
       rafRef.current = requestAnimationFrame(tick);
     };
@@ -394,6 +440,7 @@ export function LineGecko() {
         setDir(turned.dir);
         setAlong(turned.along);
         walkingRef.current = true;
+        progressRef.current = progressFromAlong(turned.side, turned.along, s);
         publish();
         timeoutRef.current = setTimeout(schedule, rand(900, 2800));
         return;
@@ -451,6 +498,7 @@ export function LineGecko() {
       setSide(start);
       setAlong(alongRef.current);
       setDir(dirRef.current);
+      progressRef.current = progressFromAlong(start, alongRef.current, s);
       if (start === "chair" || start === "tree" || start === "rock") {
         walkingRef.current = false;
         showQuip(pickPerchQuip("gecko", start), rand(2800, 4200));
@@ -467,6 +515,10 @@ export function LineGecko() {
     }, 200);
 
     window.addEventListener("resize", applyMetrics);
+    window.addEventListener("scroll", applyMetrics, { capture: true, passive: true });
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", applyMetrics);
+    vv?.addEventListener("scroll", applyMetrics);
 
     return () => {
       cancelled = true;
@@ -476,6 +528,9 @@ export function LineGecko() {
       if (quipTimeoutRef.current) clearTimeout(quipTimeoutRef.current);
       window.clearTimeout(startLoop);
       window.removeEventListener("resize", applyMetrics);
+      window.removeEventListener("scroll", applyMetrics, { capture: true });
+      vv?.removeEventListener("resize", applyMetrics);
+      vv?.removeEventListener("scroll", applyMetrics);
     };
   }, [reducedMotion]);
 
