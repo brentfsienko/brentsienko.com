@@ -37,10 +37,13 @@ function isProbablyImage(file: File) {
 
 function photosFromMarkdown(body: string) {
   const out: { alt: string; url: string }[] = [];
-  const re = /!\[([^\]]*)\]\((https?:[^)\s]+)\)/g;
+  const re = /!\[([^\]]*)\]\(([^)\s]+)\)/g;
   let match: RegExpExecArray | null;
   while ((match = re.exec(body))) {
-    out.push({ alt: match[1] ?? "", url: match[2] ?? "" });
+    const url = match[2] ?? "";
+    if (url.startsWith("http") || url.startsWith("/api/blog/photo/")) {
+      out.push({ alt: match[1] ?? "", url });
+    }
   }
   return out;
 }

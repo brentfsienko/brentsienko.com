@@ -30,7 +30,7 @@ Open [http://localhost:3000](http://localhost:3000).
    - `BLOG_ADMIN_PASSWORD` — unlocks `/blog/write`
    - `BLOG_SESSION_SECRET` — e.g. `openssl rand -base64 32`
 
-Posts are stored as private blobs at `blog/posts/{slug}.json`. Photos upload as public blobs at `blog/images/…` and land in the markdown as `![alt](url)`.
+Posts are stored as private blobs at `blog/posts/{slug}.json`. Photos are private blobs at `blog/images/…`, served at `/api/blog/photo/blog/images/…`, and land in the markdown as `![alt](/api/blog/photo/…)`.
 
 ## Deploy
 

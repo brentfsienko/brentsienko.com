@@ -55,16 +55,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    const blob = await put(
-      `blog/images/${randomUUID()}.${extFor(file.type)}`,
-      file,
-      {
-        access: "public",
-        addRandomSuffix: false,
-        contentType: file.type,
-      },
-    );
-    return NextResponse.json({ url: blob.url });
+    const pathname = `blog/images/${randomUUID()}.${extFor(file.type)}`;
+    await put(pathname, file, {
+      access: "private",
+      addRandomSuffix: false,
+      contentType: file.type,
+    });
+    return NextResponse.json({ url: `/api/blog/photo/${pathname}` });
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Upload failed." },
