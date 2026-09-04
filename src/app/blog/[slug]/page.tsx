@@ -23,7 +23,7 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
       <Link href="/blog" className="text-sm text-ink-faint no-underline hover:text-ink">
-        ← blog
+        ← bits and bobs
       </Link>
       <h1 className="mt-6 text-3xl font-bold tracking-tight sm:text-4xl">
         {post.title}
