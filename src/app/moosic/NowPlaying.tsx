@@ -5,11 +5,18 @@ import { useEffect, useRef, useState } from "react";
 type NowPlayingData =
   | { configured: false }
   | { live: true; kind: "track"; id: string; title: string; artist: string; albumArt: string | null }
+  | { live: false; kind: "track"; id: string; title: string; artist: string; albumArt: string | null }
   | { live: false; kind: "playlist"; id: string; title: string; artist: null; albumArt: string | null };
 
 const POLL_MS = 15_000;
 
-function LiveBadge({ live }: { live: boolean }) {
+function LiveBadge({ live, kind }: { live: boolean; kind: "track" | "playlist" }) {
+  const label = live
+    ? "broadcasting live"
+    : kind === "track"
+      ? "last played"
+      : "off air — daylist";
+
   return (
     <span
       className={`inline-flex items-center gap-1.5 border-2 border-ink px-2 py-0.5 text-xs font-bold uppercase tracking-widest ${live ? "bg-ink text-paper" : "bg-paper text-ink-soft"}`}
@@ -17,7 +24,7 @@ function LiveBadge({ live }: { live: boolean }) {
       {live && (
         <span className="radio-live-dot" aria-hidden />
       )}
-      {live ? "broadcasting live" : "off air — daylist"}
+      {label}
     </span>
   );
 }
@@ -85,12 +92,12 @@ export function NowPlaying() {
         />
       )}
       <div className="min-w-0">
-        <LiveBadge live={nowData.live} />
+        <LiveBadge live={nowData.live} kind={nowData.kind} />
         <p className="mt-2 truncate font-bold">{nowData.title}</p>
         {nowData.artist && (
           <p className="truncate text-sm text-ink-soft">{nowData.artist}</p>
         )}
-        {!nowData.live && (
+        {!nowData.live && nowData.kind === "playlist" && (
           <p className="mt-1 text-xs text-ink-faint">
             nothing on the decks — here&apos;s today&apos;s daylist
           </p>

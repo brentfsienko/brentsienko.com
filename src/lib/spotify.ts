@@ -2,7 +2,26 @@
 
 export type NowPlayingResult =
   | { live: true; kind: "track"; id: string; title: string; artist: string; albumArt: string | null }
+  | { live: false; kind: "track"; id: string; title: string; artist: string; albumArt: string | null }
   | { live: false; kind: "playlist"; id: string; title: string; artist: null; albumArt: string | null };
+
+type SpotifyTrack = {
+  id: string;
+  name: string;
+  artists: { name: string }[];
+  album: { images: { url: string }[] };
+};
+
+function asTrack(item: SpotifyTrack, live: boolean): Extract<NowPlayingResult, { kind: "track" }> {
+  return {
+    live,
+    kind: "track",
+    id: item.id,
+    title: item.name,
+    artist: item.artists.map((a) => a.name).join(", "),
+    albumArt: item.album.images[0]?.url ?? null,
+  };
+}
 
 type TokenCache = { accessToken: string; expiresAt: number };
 let tokenCache: TokenCache | null = null;
@@ -89,46 +108,56 @@ async function findDaylistPlaylist(): Promise<{ id: string; title: string; album
   return fallbackId ? { id: fallbackId, title: "daylist", albumArt: null } : null;
 }
 
+async function getRecentlyPlayedTrack(): Promise<Extract<NowPlayingResult, { kind: "track" }> | null> {
+  try {
+    const res = await spotifyFetch("/me/player/recently-played?limit=1");
+    if (!res.ok) return null;
+    const data = await res.json() as { items: { track: SpotifyTrack | null }[] };
+    const track = data.items[0]?.track;
+    if (!track?.id) return null;
+    return asTrack(track, false);
+  } catch {
+    return null;
+  }
+}
+
+async function getIdleNowPlaying(): Promise<NowPlayingResult | null> {
+  const recent = await getRecentlyPlayedTrack();
+  if (recent) return recent;
+
+  const daylist = await findDaylistPlaylist();
+  if (!daylist) return null;
+  return {
+    live: false,
+    kind: "playlist",
+    id: daylist.id,
+    title: daylist.title,
+    artist: null,
+    albumArt: daylist.albumArt,
+  };
+}
+
 export async function getNowPlaying(): Promise<NowPlayingResult | null> {
   if (!isSpotifyConfigured()) return null;
 
   try {
     const res = await spotifyFetch("/me/player/currently-playing");
 
-    // 204 = nothing playing; 200 with isPlaying false = paused
-    if (res.status === 204) {
-      const daylist = await findDaylistPlaylist();
-      if (!daylist) return null;
-      return { live: false, kind: "playlist", id: daylist.id, title: daylist.title, artist: null, albumArt: daylist.albumArt };
-    }
-
-    if (!res.ok) return null;
+    // 204 = nothing in the player
+    if (res.status === 204) return getIdleNowPlaying();
+    if (!res.ok) return getIdleNowPlaying();
 
     const data = await res.json() as {
       is_playing: boolean;
-      item: {
-        id: string;
-        name: string;
-        artists: { name: string }[];
-        album: { images: { url: string }[] };
-      } | null;
+      item: SpotifyTrack | null;
       currently_playing_type: string;
     };
 
-    if (!data.is_playing || !data.item || data.currently_playing_type !== "track") {
-      const daylist = await findDaylistPlaylist();
-      if (!daylist) return null;
-      return { live: false, kind: "playlist", id: daylist.id, title: daylist.title, artist: null, albumArt: daylist.albumArt };
+    if (data.item && data.currently_playing_type === "track") {
+      return asTrack(data.item, data.is_playing);
     }
 
-    return {
-      live: true,
-      kind: "track",
-      id: data.item.id,
-      title: data.item.name,
-      artist: data.item.artists.map((a) => a.name).join(", "),
-      albumArt: data.item.album.images[0]?.url ?? null,
-    };
+    return getIdleNowPlaying();
   } catch {
     return null;
   }
@@ -227,6 +256,7 @@ export function buildSpotifyAuthUrl() {
   const scopes = [
     "user-read-currently-playing",
     "user-read-playback-state",
+    "user-read-recently-played",
     "playlist-read-private",
     "user-top-read",
   ].join(" ");
