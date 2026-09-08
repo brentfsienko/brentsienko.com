@@ -177,6 +177,20 @@ a:hover {
   animation-iteration-count: infinite;
 }
 
+@keyframes bee-hover {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.bee-hover {
+  animation: bee-hover 0.72s steps(2) infinite;
+}
+
 /* ── Bee flight trail ── */
 @keyframes bee-dash-fade {
   from {
@@ -456,6 +470,7 @@ a:hover {
   .paper-grain::before,
   .leaf-flicker,
   .bee-fly,
+  .bee-hover,
   .nav-link::after,
   .radio-live-dot,
   .quote-marquee-track,

@@ -3,7 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { PixelBee } from "@/components/PixelArt";
 import { CritterBubble } from "@/components/CritterBubble";
-import { getGeckoPose, onCritterChat, pickBeeQuip, pickPerchQuip, tryStartDuet } from "@/components/critterChat";
+import {
+  getGeckoPose,
+  isChatBusy,
+  onCritterChat,
+  pickBeeQuip,
+  pickPerchQuip,
+  tryStartDuet,
+} from "@/components/critterChat";
 import {
   isBehindOrInTree,
   readTreeBox,
@@ -151,6 +158,21 @@ export function WanderingBee() {
     type TargetKind = "wander" | "hive" | "chat" | "duet" | "chair" | "tree";
 
     let legsSinceChat = 99;
+    let lastBeeSpeech = 0;
+    let holdUntil = 0;
+    let docked = true;
+    let flightGen = 0;
+    const SPEECH_COOLDOWN_MS = 22_000;
+
+    const beeCanBanter = () => Date.now() - lastBeeSpeech > SPEECH_COOLDOWN_MS;
+
+    const abortFlight = () => {
+      flightGen += 1;
+      if (rafRef.current != null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
 
     const geckoMeet = (): Point => {
       const pose = getGeckoPose();
@@ -197,10 +219,11 @@ export function WanderingBee() {
       allowHive: boolean,
     ): { point: Point; kind: TargetKind } => {
       const roll = Math.random();
-      if (legsSinceChat >= 10 && roll < 0.03) {
+      const chatty = beeCanBanter();
+      if (chatty && legsSinceChat >= 18 && roll < 0.012) {
         return { point: geckoMeet(), kind: "duet" };
       }
-      if (legsSinceChat >= 8 && roll < 0.08) {
+      if (chatty && legsSinceChat >= 14 && roll < 0.035) {
         return { point: centerSpot(), kind: "chat" };
       }
       const chair = chairSpot();
@@ -222,8 +245,28 @@ export function WanderingBee() {
 
     let cancelled = false;
     let justLeftHive = true;
+    let loop: () => void = () => {};
+
+    const resumeWhenQuiet = () => {
+      if (cancelled || docked) return;
+      const left = holdUntil - Date.now();
+      if (left > 50 || isChatBusy()) {
+        timeoutRef.current = setTimeout(resumeWhenQuiet, Math.max(left, 400));
+        return;
+      }
+      setQuip(null);
+      loop();
+    };
+
+    const holdHere = (ms: number) => {
+      abortFlight();
+      holdUntil = Math.max(holdUntil, Date.now() + ms);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(resumeWhenQuiet, holdUntil - Date.now());
+    };
 
     const flyTo = (to: Point, onDone: () => void) => {
+      const gen = ++flightGen;
       const from = { ...posRef.current };
       const dist = Math.hypot(to.x - from.x, to.y - from.y);
       const duration = Math.min(5200, Math.max(1800, dist * 8 + rand(400, 1200)));
@@ -233,9 +276,10 @@ export function WanderingBee() {
       let lastDashAt = { ...from };
       setFacingLeft(to.x < from.x);
       setVisible(true);
+      setQuip(null);
 
       const tick = (now: number) => {
-        if (cancelled) return;
+        if (cancelled || gen !== flightGen) return;
         const t = Math.min(1, (now - start) / duration);
         const e = easeInOut(t);
         const envelope = Math.sin(t * Math.PI);
@@ -264,7 +308,7 @@ export function WanderingBee() {
       rafRef.current = requestAnimationFrame(tick);
     };
 
-    const loop = () => {
+    loop = () => {
       if (cancelled) return;
       const allowHive = !justLeftHive;
       justLeftHive = false;
@@ -274,6 +318,7 @@ export function WanderingBee() {
 
       flyTo(target, () => {
         if (kind === "hive") {
+          docked = true;
           setVisible(false);
           setQuip(null);
           clearTrail();
@@ -282,6 +327,7 @@ export function WanderingBee() {
           setPos(dock);
           timeoutRef.current = setTimeout(() => {
             if (cancelled) return;
+            docked = false;
             justLeftHive = true;
             setVisible(true);
             loop();
@@ -290,32 +336,27 @@ export function WanderingBee() {
         }
 
         if (kind === "duet") {
+          lastBeeSpeech = Date.now();
           tryStartDuet();
-          timeoutRef.current = setTimeout(() => {
-            if (cancelled) return;
-            setQuip(null);
-            loop();
-          }, rand(6200, 7800));
+          holdHere(rand(6200, 7800));
           return;
         }
 
         if (kind === "chat") {
+          lastBeeSpeech = Date.now();
           setQuip(pickBeeQuip());
-          timeoutRef.current = setTimeout(() => {
-            if (cancelled) return;
-            setQuip(null);
-            loop();
-          }, rand(3000, 5000));
+          holdHere(rand(3200, 5200));
           return;
         }
 
         if (kind === "chair" || kind === "tree") {
-          setQuip(pickPerchQuip("bee", kind));
-          timeoutRef.current = setTimeout(() => {
-            if (cancelled) return;
-            setQuip(null);
-            loop();
-          }, rand(2800, 4600));
+          if (beeCanBanter() && Math.random() < 0.22) {
+            lastBeeSpeech = Date.now();
+            setQuip(pickPerchQuip("bee", kind));
+            holdHere(rand(2800, 4600));
+          } else {
+            holdHere(rand(700, 1600));
+          }
           return;
         }
 
@@ -324,8 +365,10 @@ export function WanderingBee() {
     };
 
     const stopChat = onCritterChat((line) => {
-      if (line.from !== "bee") return;
+      if (cancelled || docked || line.from !== "bee") return;
+      lastBeeSpeech = Date.now();
       setQuip(line.text);
+      holdHere(rand(3200, 4200));
     });
 
     const start = hive();
@@ -333,9 +376,11 @@ export function WanderingBee() {
     setPos(start);
     setVisible(false);
     setQuip(null);
+    docked = true;
     clearTrail();
     timeoutRef.current = setTimeout(() => {
       if (cancelled) return;
+      docked = false;
       justLeftHive = true;
       setVisible(true);
       loop();
@@ -382,11 +427,13 @@ export function WanderingBee() {
               preferred="above"
             />
           ) : null}
-          <PixelBee
-            width={BEE_W}
-            height={BEE_H}
-            className={`!animate-none ${facingLeft ? "-scale-x-100" : ""}`}
-          />
+          <div className={quip ? undefined : "bee-hover"}>
+            <PixelBee
+              width={BEE_W}
+              height={BEE_H}
+              className={`!animate-none ${facingLeft ? "-scale-x-100" : ""}`}
+            />
+          </div>
         </div>
       )}
 

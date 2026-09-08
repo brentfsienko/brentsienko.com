@@ -345,7 +345,9 @@ export function LineGecko() {
       setAlong(alongRef.current);
       setWalking(false);
       progressRef.current = progressFromAlong(next, alongRef.current, s);
-      showQuip(pickPerchQuip("gecko", next), rand(2800, 4400));
+      if (Math.random() < 0.4) {
+        showQuip(pickPerchQuip("gecko", next), rand(2800, 4400));
+      }
       publish();
     };
 
@@ -433,7 +435,7 @@ export function LineGecko() {
       if (here === "chair" || here === "rock") {
         if (roll < 0.55) {
           setWalking(false);
-          if (roll < 0.18) {
+          if (roll < 0.08) {
             showQuip(pickPerchQuip("gecko", here), rand(2600, 4000));
           }
           timeoutRef.current = setTimeout(schedule, rand(2200, 4800));
@@ -456,7 +458,9 @@ export function LineGecko() {
       if (here === "tree") {
         if (roll < 0.22) {
           setWalking(false);
-          showQuip(pickPerchQuip("gecko", "tree"), rand(2600, 4000));
+          if (Math.random() < 0.4) {
+            showQuip(pickPerchQuip("gecko", "tree"), rand(2600, 4000));
+          }
           timeoutRef.current = setTimeout(schedule, rand(2800, 5000));
           return;
         }
@@ -476,7 +480,7 @@ export function LineGecko() {
           timeoutRef.current = setTimeout(schedule, rand(6200, 7600));
           return;
         }
-        if (roll < 0.07) {
+        if (roll < 0.03) {
           showQuip(pickGeckoQuip(), rand(2800, 4200));
         }
         timeoutRef.current = setTimeout(schedule, rand(1600, 3600));
