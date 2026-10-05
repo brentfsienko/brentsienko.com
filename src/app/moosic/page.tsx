@@ -5,7 +5,7 @@ import { NowPlaying } from "./NowPlaying";
 
 export const metadata: Metadata = {
   title: "Radio",
-  description: "Live from Brent's Spotify — now playing, plus a favorite song and album each month.",
+  description: "Live from Brent's Spotify — now playing, plus a favorite song and album from last month.",
 };
 
 export const revalidate = 10800;
@@ -55,13 +55,13 @@ function MonthlyPickRow({
 }
 
 export default async function RadioPage() {
-  const { current, past, currentLabel } = splitRadioHistory();
+  const { featured, past, featuredLabel } = splitRadioHistory();
 
   const [topTracks, topArtists, songImage, albumImage, pastMonths] = await Promise.all([
     getTopTracks(3),
     getTopArtists(3),
-    current ? getTrackImage(current.song.spotifyId) : Promise.resolve(null),
-    current ? getAlbumImage(current.album.spotifyId) : Promise.resolve(null),
+    featured ? getTrackImage(featured.song.spotifyId) : Promise.resolve(null),
+    featured ? getAlbumImage(featured.album.spotifyId) : Promise.resolve(null),
     Promise.all(
       past.map(async (month) => {
         const [songArt, albumArt] = await Promise.all([
@@ -80,7 +80,7 @@ export default async function RadioPage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">mooooooooosic</h1>
         <p className="mt-2 max-w-xl text-sm text-ink-soft">
-          What I&apos;m currently listening to + monthly and current favs.
+          What I&apos;m currently listening to + last month&apos;s favs.
         </p>
       </div>
 
@@ -161,35 +161,35 @@ export default async function RadioPage() {
         </section>
       )}
 
-      {/* This month — song LEFT | album RIGHT. Blank until this month's picks land. */}
+      {/* Last month — song LEFT | album RIGHT. Blank until last month's picks land. */}
       <section className="mb-14">
         <div className="mb-3 flex items-baseline gap-2">
-          <h2 className="text-xs uppercase tracking-widest text-ink-faint">this month</h2>
-          <span className="text-xs text-ink-faint">{currentLabel}</span>
+          <h2 className="text-xs uppercase tracking-widest text-ink-faint">last month</h2>
+          <span className="text-xs text-ink-faint">{featuredLabel}</span>
         </div>
-        {current ? (
+        {featured ? (
           <div className="grid gap-2 sm:grid-cols-2">
             <MonthlyPickRow
               label="favorite song"
-              title={current.song.title}
-              artist={current.song.artist}
-              note={current.song.note}
-              spotifyUrl={current.song.spotifyUrl}
+              title={featured.song.title}
+              artist={featured.song.artist}
+              note={featured.song.note}
+              spotifyUrl={featured.song.spotifyUrl}
               imageUrl={songImage}
             />
             <MonthlyPickRow
               label="favorite album"
-              title={current.album.title}
-              artist={current.album.artist}
-              note={current.album.note}
-              spotifyUrl={current.album.spotifyUrl}
+              title={featured.album.title}
+              artist={featured.album.artist}
+              note={featured.album.note}
+              spotifyUrl={featured.album.spotifyUrl}
               imageUrl={albumImage}
             />
           </div>
         ) : (
           <div className="border-2 border-dashed border-ink-faint p-6">
             <p className="text-sm text-ink-soft">
-              no picks yet this month — check back soon.
+              no picks yet for last month — check back soon.
             </p>
           </div>
         )}
