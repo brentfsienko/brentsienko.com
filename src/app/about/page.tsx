@@ -11,8 +11,7 @@ export default function AboutPage() {
       <div className="mt-6 max-w-2xl space-y-4 leading-relaxed text-ink-soft">
         <p>
           Hi, I&apos;m Brent. Friend of bees and trees and very recently, the
-          most trustworthy chair. Here&apos;s a little slice of my life! I hope
-          you find it as tasty as I have.
+          most trustworthy chair. Here&apos;s a little slice of my life!
         </p>
       </div>
     </div>
