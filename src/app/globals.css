@@ -188,7 +188,7 @@ a:hover {
 }
 
 .bee-hover {
-  animation: bee-hover 0.72s steps(2) infinite;
+  animation: bee-hover 1.55s ease-in-out infinite;
 }
 
 /* ── Bee flight trail ── */

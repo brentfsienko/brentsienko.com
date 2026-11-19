@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { PixelBee } from "@/components/PixelArt";
 import { CritterBubble } from "@/components/CritterBubble";
 import {
@@ -31,8 +31,8 @@ function rand(min: number, max: number) {
   return min + Math.random() * (max - min);
 }
 
-function easeInOut(t: number) {
-  return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+function smootherstep(t: number) {
+  return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
 function entranceEl() {
@@ -44,13 +44,26 @@ export function WanderingBee() {
   const [facingLeft, setFacingLeft] = useState(false);
   const [visible, setVisible] = useState(true);
   const [quip, setQuip] = useState<string | null>(null);
+  const [flying, setFlying] = useState(false);
   const [trail, setTrail] = useState<Dash[]>([]);
   const [reducedMotion, setReducedMotion] = useState(false);
   const posRef = useRef(pos);
+  const beeElRef = useRef<HTMLDivElement>(null);
+  const facingRef = useRef(false);
   const rafRef = useRef<number | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dashTimeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const dashIdRef = useRef(0);
+
+  const writePos = (p: Point) => {
+    posRef.current = p;
+    const el = beeElRef.current;
+    if (el) el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
+  };
+
+  useLayoutEffect(() => {
+    writePos(posRef.current);
+  });
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -172,6 +185,8 @@ export function WanderingBee() {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
+      setFlying(false);
+      setPos({ ...posRef.current });
     };
 
     const geckoMeet = (): Point => {
@@ -268,40 +283,70 @@ export function WanderingBee() {
     const flyTo = (to: Point, onDone: () => void) => {
       const gen = ++flightGen;
       const from = { ...posRef.current };
-      const dist = Math.hypot(to.x - from.x, to.y - from.y);
-      const duration = Math.min(5200, Math.max(1800, dist * 8 + rand(400, 1200)));
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const dist = Math.hypot(dx, dy);
+      const duration = Math.min(6800, Math.max(2400, dist * 11));
       const start = performance.now();
-      const wobbleAmp = 8 + Math.random() * 12;
-      const wobbleFreq = 2.5 + Math.random() * 2;
+      const nx = dist > 1 ? -dy / dist : 0;
+      const ny = dist > 1 ? dx / dist : 1;
+      const bend = (Math.random() < 0.5 ? -1 : 1) * rand(28, 72);
+      let mid: Point = {
+        x: from.x + dx * 0.5 + nx * bend,
+        y: from.y + dy * 0.5 + ny * bend,
+      };
+      const pad = 28;
+      mid = {
+        x: Math.min(window.innerWidth - pad - BEE_W, Math.max(pad, mid.x)),
+        y: Math.min(window.innerHeight - pad - BEE_H, Math.max(pad + 36, mid.y)),
+      };
+      mid = keepInFront(mid, readTreeBox());
+      const hoverAmp = 3.2;
+      const hoverFreq = 0.9 + Math.random() * 0.35;
       let lastDashAt = { ...from };
-      setFacingLeft(to.x < from.x);
+      let lastX = from.x;
+      facingRef.current = to.x < from.x;
+      setFacingLeft(facingRef.current);
+      setFlying(true);
       setVisible(true);
       setQuip(null);
+      writePos(from);
 
       const tick = (now: number) => {
         if (cancelled || gen !== flightGen) return;
         const t = Math.min(1, (now - start) / duration);
-        const e = easeInOut(t);
+        const e = smootherstep(t);
+        const u = 1 - e;
         const envelope = Math.sin(t * Math.PI);
-        const wobble = Math.sin(t * Math.PI * wobbleFreq) * wobbleAmp * envelope;
+        const bob = Math.sin(t * Math.PI * 2 * hoverFreq) * hoverAmp * envelope;
         const next = keepInFront(
           {
-            x: from.x + (to.x - from.x) * e,
-            y: from.y + (to.y - from.y) * e + wobble,
+            x: u * u * from.x + 2 * u * e * mid.x + e * e * to.x,
+            y: u * u * from.y + 2 * u * e * mid.y + e * e * to.y + bob,
           },
           readTreeBox(),
         );
+        const vx = next.x - lastX;
+        if (vx < -0.55 && !facingRef.current) {
+          facingRef.current = true;
+          setFacingLeft(true);
+        } else if (vx > 0.55 && facingRef.current) {
+          facingRef.current = false;
+          setFacingLeft(false);
+        }
+        lastX = next.x;
         if (
           Math.hypot(next.x - lastDashAt.x, next.y - lastDashAt.y) >= DASH_GAP
         ) {
           dropDash(next, lastDashAt);
           lastDashAt = { ...next };
         }
-        posRef.current = next;
-        setPos(next);
+        writePos(next);
         if (t < 1) {
           rafRef.current = requestAnimationFrame(tick);
         } else {
+          setFlying(false);
+          setPos(next);
           onDone();
         }
       };
@@ -323,7 +368,7 @@ export function WanderingBee() {
           setQuip(null);
           clearTrail();
           const dock = hive();
-          posRef.current = dock;
+          writePos(dock);
           setPos(dock);
           timeoutRef.current = setTimeout(() => {
             if (cancelled) return;
@@ -372,7 +417,7 @@ export function WanderingBee() {
     });
 
     const start = hive();
-    posRef.current = start;
+    writePos(start);
     setPos(start);
     setVisible(false);
     setQuip(null);
@@ -413,9 +458,10 @@ export function WanderingBee() {
 
       {!reducedMotion && visible && (
         <div
+          ref={beeElRef}
           className="absolute will-change-transform"
           style={{
-            transform: `translate(${pos.x}px, ${pos.y}px)`,
+            transform: `translate3d(${pos.x}px, ${pos.y}px, 0)`,
           }}
         >
           {quip ? (
@@ -427,7 +473,7 @@ export function WanderingBee() {
               preferred="above"
             />
           ) : null}
-          <div className={quip ? undefined : "bee-hover"}>
+          <div className={quip || flying ? undefined : "bee-hover"}>
             <PixelBee
               width={BEE_W}
               height={BEE_H}
