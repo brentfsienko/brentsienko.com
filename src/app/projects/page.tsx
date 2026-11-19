@@ -24,7 +24,8 @@ type Card = {
 const cards: Card[] = [
   ...projects.map<Card>((p) => ({
     key: p.slug,
-    href: `/work/${p.slug}`,
+    href: p.liveUrl,
+    external: true,
     title: p.name,
     description: p.tagline,
     src: p.logoSrc,
