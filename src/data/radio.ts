@@ -21,6 +21,21 @@ export type RadioData = {
  */
 export const radioHistory: RadioData[] = [
   {
+    monthLabel: "October 2026",
+    song: {
+      title: "Erase / Rewind",
+      artist: "The Cardigans",
+      spotifyId: "3JfkNCiXjHEVkbFfCQ417E",
+      spotifyUrl: "https://open.spotify.com/track/3JfkNCiXjHEVkbFfCQ417E",
+    },
+    album: {
+      title: "Margot Texas",
+      artist: "Margot Texas",
+      spotifyId: "49Y03cvk33pEDEw27buCR1",
+      spotifyUrl: "https://open.spotify.com/album/49Y03cvk33pEDEw27buCR1",
+    },
+  },
+  {
     monthLabel: "September 2026",
     song: {
       title: "Marianne",
