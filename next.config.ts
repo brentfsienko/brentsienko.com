@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
       })),
       { source: "/craft", destination: "/projects", permanent: false },
       { source: "/craft/:path*", destination: "/projects/:path*", permanent: false },
+      // Project detail pages were removed; the cards link to each live site instead.
+      { source: "/work", destination: "/projects", permanent: false },
+      { source: "/work/:slug", destination: "/projects", permanent: false },
     ];
   },
 };

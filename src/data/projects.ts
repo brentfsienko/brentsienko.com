@@ -33,7 +33,3 @@ export const projects: Project[] = [
     logoSrc: "/art/benchmark-logo.png",
   },
 ];
-
-export function getProject(slug: string) {
-  return projects.find((p) => p.slug === slug);
-}

@@ -16,7 +16,7 @@ export default function HomePage() {
           Friend of trees and bees and a good chair.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/work" className="btn btn-solid">
+          <Link href="/projects" className="btn btn-solid">
             see work
           </Link>
           <Link href="/blog" className="btn">
