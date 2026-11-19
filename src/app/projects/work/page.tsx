@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Craft — Work",
+  title: "Projects — Work",
 };
 
 export default function WorkPage() {

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { PixelHive } from "@/components/PixelArt";
 
 const links = [
-  { href: "/craft", label: "craft" },
+  { href: "/projects", label: "projects" },
   { href: "/blog", label: "blog" },
   { href: "/moosic", label: "moosic" },
   { href: "/about", label: "about" },

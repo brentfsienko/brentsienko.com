@@ -4,7 +4,7 @@ import Link from "next/link";
 import { projects } from "@/data/projects";
 
 export const metadata: Metadata = {
-  title: "Craft",
+  title: "Projects",
 };
 
 type Card = {
@@ -46,7 +46,7 @@ const cards: Card[] = [
   },
   {
     key: "work",
-    href: "/craft/work",
+    href: "/projects/work",
     title: "resume",
     description: "Resume, links, and ways to get in touch.",
     src: "/art/resume-thumb.png",
@@ -56,11 +56,11 @@ const cards: Card[] = [
   },
 ];
 
-export default function CraftPage() {
+export default function ProjectsPage() {
   return (
     <div>
       <div className="mb-10">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">craft</h1>
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">projects</h1>
         <p className="mt-3 max-w-xl text-ink-soft">
           Things I&apos;ve made — plus everything else on{" "}
           <a href="https://github.com/brentfsienko" target="_blank" rel="noopener noreferrer">

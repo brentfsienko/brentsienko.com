@@ -2,12 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async redirects() {
-    // The craft sections were folded into one grid at /craft.
-    return ["ones-n-zeros", "scribbles", "rags"].map((s) => ({
-      source: `/craft/${s}`,
-      destination: "/craft",
-      permanent: false,
-    }));
+    // "craft" was renamed to "projects"; its old sections were folded into the one grid.
+    return [
+      ...["ones-n-zeros", "scribbles", "rags"].map((s) => ({
+        source: `/craft/${s}`,
+        destination: "/projects",
+        permanent: false,
+      })),
+      { source: "/craft", destination: "/projects", permanent: false },
+      { source: "/craft/:path*", destination: "/projects/:path*", permanent: false },
+    ];
   },
 };
 

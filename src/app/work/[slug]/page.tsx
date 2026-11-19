@@ -24,8 +24,8 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
-      <Link href="/craft" className="text-sm text-ink-faint no-underline hover:text-ink">
-        ← craft
+      <Link href="/projects" className="text-sm text-ink-faint no-underline hover:text-ink">
+        ← projects
       </Link>
 
       <div className="mt-6 flex items-start gap-5">
