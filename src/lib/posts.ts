@@ -7,7 +7,7 @@ import {
 } from "./post-types";
 
 export type { Post } from "./post-types";
-export { isBlobConfigured, slugify, postPathname } from "./post-types";
+export { isBlobConfigured, slugify, postPathname, firstPhoto } from "./post-types";
 
 async function readPostFromPath(pathname: string): Promise<Post | null> {
   const result = await get(pathname, { access: "private", useCache: false });

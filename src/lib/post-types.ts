@@ -28,3 +28,16 @@ export function slugify(title: string) {
     .replace(/-+/g, "-")
     .slice(0, 80);
 }
+
+/** The first photo in a post's markdown body, used as its thumbnail on the blog list. */
+export function firstPhoto(body: string): { url: string; alt: string } | null {
+  const re = /!\[([^\]]*)\]\(([^)\s]+)\)/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(body))) {
+    const url = match[2] ?? "";
+    if (url.startsWith("https://") || url.startsWith("/api/blog/photo/")) {
+      return { url, alt: match[1] ?? "" };
+    }
+  }
+  return null;
+}

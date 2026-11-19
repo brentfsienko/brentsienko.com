@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PixelBloom } from "@/components/PixelArt";
-import { listPublishedPosts, isBlobConfigured } from "@/lib/posts";
+import { listPublishedPosts, isBlobConfigured, firstPhoto } from "@/lib/posts";
+
+/** Shown in place of a thumbnail for posts without a photo. */
+const FALLBACK_BLOOMS = [
+  { palette: "rose", shape: "heart" },
+  { palette: "gold", shape: "bench" },
+  { palette: "lilac", shape: "burst" },
+  { palette: "sky", shape: "daisy" },
+] as const;
 
 export const metadata: Metadata = {
   title: "bits and bobs",
@@ -63,9 +71,32 @@ export default async function BlogIndexPage() {
       )}
 
       <ul className="divide-y-2 divide-ink border-y-2 border-ink">
-        {posts.map((post) => (
+        {posts.map((post, i) => {
+          const photo = firstPhoto(post.body);
+          const bloom = FALLBACK_BLOOMS[i % FALLBACK_BLOOMS.length];
+          return (
           <li key={post.id} className="py-2">
-            <Link href={`/blog/${post.slug}`} className="group block rounded-sm px-2 py-4 no-underline transition-colors duration-100 hover:bg-[#e8a317]">
+            <Link href={`/blog/${post.slug}`} className="group flex items-start gap-4 rounded-sm px-2 py-4 no-underline transition-colors duration-100 hover:bg-[#e8a317] sm:gap-5">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden border-2 border-ink bg-paper sm:h-24 sm:w-24">
+                {photo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={photo.url}
+                    alt=""
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <PixelBloom
+                    palette={bloom.palette}
+                    shape={bloom.shape}
+                    width={40}
+                    height={70}
+                    className="h-14 w-auto sm:h-16"
+                  />
+                )}
+              </div>
+              <div className="min-w-0">
               <h2 className="text-xl font-bold">{post.title}</h2>
               {post.summary && (
                 <p className="mt-2 text-sm text-ink-soft">{post.summary}</p>
@@ -79,9 +110,11 @@ export default async function BlogIndexPage() {
                   })}
                 </p>
               )}
+              </div>
             </Link>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </div>
   );
