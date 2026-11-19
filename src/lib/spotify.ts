@@ -127,9 +127,14 @@ async function getRecentlyPlayedTrack(): Promise<Extract<NowPlayingResult, { kin
   }
 }
 
-async function getIdleNowPlaying(): Promise<NowPlayingResult | null> {
+async function getIdleNowPlaying(
+  pausedItem?: SpotifyTrack | null,
+): Promise<NowPlayingResult | null> {
   const recent = await getRecentlyPlayedTrack();
   if (recent) return remember(recent);
+
+  const paused = pausedItem ? asTrack(pausedItem, false) : null;
+  if (paused) return remember(paused);
   if (lastHeardTrack) return lastHeardTrack;
 
   const daylist = await findDaylistPlaylist();
@@ -161,14 +166,18 @@ export async function getNowPlaying(): Promise<NowPlayingResult | null> {
     };
 
     const type = data.currently_playing_type;
-    if (data.item && type !== "episode" && type !== "ad") {
-      const track = asTrack(data.item, Boolean(data.is_playing));
+    const item = data.item && type !== "episode" && type !== "ad" ? data.item : null;
+
+    // A paused leftover in the player can sit there for days. Recently-played
+    // is the actual last song that finished (~30s+ of listen).
+    if (data.is_playing && item) {
+      const track = asTrack(item, true);
       if (track) return remember(track);
     }
 
-    return getIdleNowPlaying();
+    return getIdleNowPlaying(item);
   } catch {
-    return lastHeardTrack;
+    return getIdleNowPlaying();
   }
 }
 

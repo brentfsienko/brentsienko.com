@@ -17,10 +17,7 @@ function isTrack(
 }
 
 function preferStable(prev: NowPlayingData | null, next: NowPlayingData): NowPlayingData {
-  if (!("kind" in next)) {
-    return prev && isTrack(prev) ? prev : next;
-  }
-  if (next.kind === "playlist" && prev && isTrack(prev)) {
+  if ("configured" in next && !next.configured && prev && isTrack(prev)) {
     return prev;
   }
   return next;
